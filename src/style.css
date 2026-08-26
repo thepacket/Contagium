@@ -2,20 +2,22 @@
    reading dense comparative tables, not for scanning a dashboard. */
 
 :root {
-  --ink: #16181d;
-  --ink-2: #4a5058;
-  --ink-3: #767d87;
-  --paper: #fbfaf8;
-  --paper-2: #ffffff;
-  --rule: #e2e0da;
-  --rule-2: #cfccc4;
-  --accent: #7a2e2e;
-  --accent-2: #a34848;
-  --known: #2f6b4f;
-  --varies: #8a6414;
-  --contested: #9c5320;
-  --unknown: #767d87;
-  --shade: #f2efe9;
+  --ink: #191520;
+  --ink-2: #524a5e;
+  --ink-3: #6f6679;
+  --paper: #fdf9f2;
+  --paper-2: #fffdf9;
+  --rule: #e9e0d2;
+  --rule-2: #d6cab4;
+  --accent: #c23a5b;
+  /* Hover deepens rather than brightens. A lighter hover on light paper loses
+     contrast exactly when the pointer says the user is about to read it. */
+  --accent-2: #99253f;
+  --known: #1f7d55;
+  --varies: #92620a;
+  --contested: #ad4f16;
+  --unknown: #6f6679;
+  --shade: #f6eee1;
 
   /* Baltimore classes coloured by replication strategy, not one hue each. The
      seven classes are a taxonomy over three strategies — DNA, RNA, and the two
@@ -24,11 +26,26 @@
      no seven-hue set clears the discrimination floors for arbitrary pairs. The
      class itself is carried by the Roman numeral and the label beside it, so
      colour is a second channel rather than the only one. */
-  --bc-dna: #2a78d6;
-  --bc-rna: #1baf7a;
-  --bc-rt: #eb6834;
+  --bc-dna: #1668e0;
+  --bc-rna: #04ac74;
+  --bc-rt: #f4622a;
 
-  --radius: 3px;
+  /* How much hue the fills carry. High enough that a screenful of cards reads
+     as three coloured groups rather than three shades of paper — the point of
+     the colour is to be seen. What bounds it is the contrast floor rather than
+     taste: every step up costs the meta line, which sits at 5.5:1 against the
+     tightest fill here and must not drop under 4.5:1. Raising these means
+     re-measuring text on the fill, not just eyeballing it.
+     --head-tint is lower because the compare header sits over --paper and
+     carries a full-saturation band above it already. */
+  --card-tint: 30%;
+  --head-tint: 18%;
+
+  /* The surface a chip is drawn against. Tinted cards override it locally so
+     the chip mixes against its actual backdrop and keeps its step up. */
+  --surface: var(--paper-2);
+
+  --radius: 8px;
   --measure: 74ch;
   --mono: ui-monospace, "SF Mono", SFMono-Regular, Menlo, Consolas, monospace;
   --serif: "Iowan Old Style", "Palatino Linotype", Palatino, Georgia, serif;
@@ -37,25 +54,30 @@
 
 @media (prefers-color-scheme: dark) {
   :root {
-    --ink: #e8e6e1;
-    --ink-2: #b0aca4;
-    --ink-3: #837f78;
-    --paper: #14151a;
-    --paper-2: #1b1d23;
-    --rule: #2c2f37;
-    --rule-2: #3d414b;
-    --accent: #d98a8a;
-    --accent-2: #e8a8a8;
-    --known: #6fbf94;
-    --varies: #d4ac5a;
-    --contested: #dc9a62;
-    --unknown: #837f78;
-    --shade: #1f2128;
+    --ink: #f2ece4;
+    --ink-2: #d0c6b9;
+    --ink-3: #948a7e;
+    --paper: #1a1620;
+    --paper-2: #241f2c;
+    --rule: #39323f;
+    --rule-2: #4e4557;
+    --accent: #ff7d9d;
+    --accent-2: #ffa0b8;
+    --known: #4fd39a;
+    --varies: #e8bc63;
+    --contested: #f0a86a;
+    --unknown: #948a7e;
+    --shade: #2b2534;
 
     /* Stepped for the dark surface and validated against it, not flipped. */
-    --bc-dna: #3987e5;
-    --bc-rna: #199e70;
-    --bc-rt: #d95926;
+    --bc-dna: #4d97ff;
+    --bc-rna: #0fb87c;
+    --bc-rt: #ff7a45;
+
+    /* A hue laid over a dark surface reads weaker than the same proportion
+       over white, so the dark fills take more of it to land equally. */
+    --card-tint: 34%;
+    --head-tint: 22%;
   }
 }
 
@@ -212,7 +234,7 @@ button.on { background: var(--accent); border-color: var(--accent); color: #fff;
 .card {
   border: 1px solid var(--rule);
   border-radius: var(--radius);
-  background: var(--paper-2);
+  background: var(--surface);
   padding: 0.7rem 0.8rem;
   display: flex;
   flex-direction: column;
@@ -229,6 +251,11 @@ button.on { background: var(--accent); border-color: var(--accent); color: #fff;
 }
 .card-title:hover { color: var(--accent); text-decoration: underline; }
 .card-meta { font-size: 0.8rem; color: var(--ink-3); }
+/* A tinted card costs the meta line some contrast — the fill darkens the paper
+   under text that was already the lightest ink in the set. The size keeps it
+   subordinate to the title, so the de-emphasis survives one step darker while
+   the legibility does not survive staying put. */
+.card .card-meta { color: var(--ink-2); }
 .card-foot {
   display: flex;
   gap: 0.4rem;
@@ -257,17 +284,40 @@ button.on { background: var(--accent); border-color: var(--accent); color: #fff;
 .bc-rt { --bc: var(--bc-rt); }
 
 .pill.bc[class*='bc-'] {
-  background: color-mix(in oklab, var(--bc) 15%, var(--paper-2));
-  border-color: color-mix(in oklab, var(--bc) 50%, var(--paper-2));
+  background: color-mix(in oklab, var(--bc) 34%, var(--surface));
+  border-color: color-mix(in oklab, var(--bc) 72%, var(--surface));
   color: var(--ink);
 }
 
-/* A colour band on the card is what the grid is scanned by — the pill alone is
-   too small to give a screenful of cards any structure. It sits on the top edge
-   so the left edge stays free for the curated marker, which is a different
-   statement and must not be crowded out. */
-.card { border-top: 2px solid var(--rule-2); }
-.card[class*='bc-'] { border-top-color: var(--bc); }
+/* The whole card carries the strategy hue: a filled cell is what a screenful
+   of cards is scanned by, and it groups far better than an edge band did. The
+   class numeral and its label still state the class, so the colour stays a
+   second channel and is never the only one.
+   Overriding --surface (rather than `background` alone) keeps the chip mixing
+   against the tinted fill it actually sits on. */
+.card[class*='bc-'] {
+  --surface: color-mix(in oklab, var(--bc) var(--card-tint), var(--paper-2));
+  border-color: color-mix(in oklab, var(--bc) 55%, var(--rule));
+}
+
+/* The lift is the one piece of motion in the app. A grid of 427 cells should
+   answer when you point at it. */
+.card {
+  transition: transform 130ms ease, box-shadow 130ms ease;
+}
+.card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 20px -10px color-mix(in oklab, var(--bc, var(--ink)) 70%, transparent);
+}
+@media (prefers-reduced-motion: reduce) {
+  .card { transition: none; }
+  .card:hover { transform: none; }
+}
+
+/* Re-asserted after the tint: the curated marker is a different statement from
+   strategy and must survive the border-color above, which would otherwise win
+   on source order. */
+.card.is-curated { border-left-color: var(--accent); }
 
 /* --- strategy legend ------------------------------------------------------ */
 
@@ -446,7 +496,7 @@ button.on { background: var(--accent); border-color: var(--accent); color: #fff;
    above two columns says the divergence is happening within one strategy. */
 .cmp thead th[class*='bc-'] {
   border-top-color: var(--bc);
-  background: color-mix(in oklab, var(--bc) 7%, var(--paper));
+  background: color-mix(in oklab, var(--bc) var(--head-tint), var(--paper));
 }
 .cmp tbody tr:hover td { background: var(--shade); }
 
