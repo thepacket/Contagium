@@ -13,6 +13,65 @@ const BY_NAME = new Map(FAMILIES.map((f) => [f.name, f]))
 const CURATED = FAMILIES.filter((f) => f.curated)
 const MAX_COMPARE = 3
 
+// --- theme -------------------------------------------------------------------
+//
+// Three states, and "system" is the default rather than a fourth option: no
+// data-theme attribute means the CSS falls through to prefers-color-scheme.
+// An explicit choice stamps the attribute, which flips `color-scheme` and with
+// it every light-dark() pair in the stylesheet.
+//
+// Applied from here rather than from an inline <script> in index.html, which is
+// the usual way to avoid a flash of the wrong theme: the CSP is script-src
+// 'self' with no nonce, so an inline script would not run in production and
+// check-csp.mjs fails the build for one. The trade is a possible flicker on
+// first paint for a reader whose stored choice contradicts their system, which
+// is the cheaper of the two costs.
+
+const THEMES = ['system', 'light', 'dark']
+const THEME_KEY = 'contagium:theme'
+const THEME_LABEL = { system: 'Auto', light: 'Light', dark: 'Dark' }
+
+/** localStorage throws in some privacy modes; a themeless page is fine. */
+function storedTheme() {
+  try {
+    const v = localStorage.getItem(THEME_KEY)
+    return THEMES.includes(v) ? v : 'system'
+  } catch {
+    return 'system'
+  }
+}
+
+function applyTheme(theme) {
+  if (theme === 'system') document.documentElement.removeAttribute('data-theme')
+  else document.documentElement.setAttribute('data-theme', theme)
+
+  const btn = document.getElementById('theme-toggle')
+  if (!btn) return
+  const next = THEMES[(THEMES.indexOf(theme) + 1) % THEMES.length]
+  btn.textContent = THEME_LABEL[theme]
+  btn.setAttribute(
+    'aria-label',
+    `Colour theme: ${THEME_LABEL[theme]}${theme === 'system' ? ' (following your system setting)' : ''}. ` +
+      `Activate to switch to ${THEME_LABEL[next]}.`,
+  )
+  btn.title = btn.getAttribute('aria-label')
+}
+
+function initTheme() {
+  let theme = storedTheme()
+  applyTheme(theme)
+  document.getElementById('theme-toggle')?.addEventListener('click', () => {
+    theme = THEMES[(THEMES.indexOf(theme) + 1) % THEMES.length]
+    applyTheme(theme)
+    try {
+      if (theme === 'system') localStorage.removeItem(THEME_KEY)
+      else localStorage.setItem(THEME_KEY, theme)
+    } catch {
+      // Choice applies for this page view and is simply not remembered.
+    }
+  })
+}
+
 // --- tiny DOM helper ---------------------------------------------------------
 
 /** el('div.card', {href}, child, child…) — strings become text nodes. */
@@ -558,6 +617,10 @@ function route() {
       : 'Contagium — a comparative virus family reference'
   window.scrollTo(0, 0)
 }
+
+// Before the first route() so the stored theme is in place for the first paint
+// of the view, not applied a frame after it.
+initTheme()
 
 document.getElementById('colophon-text').textContent =
   `Built from ICTV ${META.msl} (${META.vmrFile}) and ViralZone, both CC BY 4.0. Catalog generated ${META.generated}. ` +

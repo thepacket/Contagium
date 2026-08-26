@@ -1,23 +1,35 @@
 /* Contagium — a reference document first, an app second. The type is sized for
    reading dense comparative tables, not for scanning a dashboard. */
 
+/* Theme has three states. Nothing on <html> means "follow the system", and the
+   toggle stamps data-theme="light" or "dark" for an explicit choice.
+   `color-scheme` is what actually decides: it resolves every light-dark() pair
+   below, and it also tells the browser to render the native form controls —
+   the search field, the two selects, the checkbox — in the matching theme,
+   which a colour-only switch cannot do.
+   Light and dark values are paired on one line on purpose. They were tuned
+   against each other, and a duplicated dark block is the kind of thing that
+   drifts one token at a time. */
 :root {
-  --ink: #191520;
-  --ink-2: #524a5e;
-  --ink-3: #6f6679;
-  --paper: #fdf9f2;
-  --paper-2: #fffdf9;
-  --rule: #e9e0d2;
-  --rule-2: #d6cab4;
-  --accent: #c23a5b;
-  /* Hover deepens rather than brightens. A lighter hover on light paper loses
-     contrast exactly when the pointer says the user is about to read it. */
-  --accent-2: #99253f;
-  --known: #1f7d55;
-  --varies: #92620a;
-  --contested: #ad4f16;
-  --unknown: #6f6679;
-  --shade: #f6eee1;
+  color-scheme: light dark;
+
+  --ink: light-dark(#191520, #f2ece4);
+  --ink-2: light-dark(#524a5e, #d0c6b9);
+  --ink-3: light-dark(#6f6679, #948a7e);
+  --paper: light-dark(#fdf9f2, #1a1620);
+  --paper-2: light-dark(#fffdf9, #241f2c);
+  --rule: light-dark(#e9e0d2, #39323f);
+  --rule-2: light-dark(#d6cab4, #4e4557);
+  --accent: light-dark(#c23a5b, #ff7d9d);
+  /* On light paper the hover deepens rather than brightens: a lighter hover
+     there loses contrast exactly when the pointer says it is about to be read.
+     On the dark surface the same reasoning runs the other way. */
+  --accent-2: light-dark(#99253f, #ffa0b8);
+  --known: light-dark(#1f7d55, #4fd39a);
+  --varies: light-dark(#92620a, #e8bc63);
+  --contested: light-dark(#ad4f16, #f0a86a);
+  --unknown: light-dark(#6f6679, #948a7e);
+  --shade: light-dark(#f6eee1, #2b2534);
 
   /* Baltimore classes coloured by replication strategy, not one hue each. The
      seven classes are a taxonomy over three strategies — DNA, RNA, and the two
@@ -25,10 +37,12 @@
      at a glance. Seven cannot: any two cards sit side by side in the grid, and
      no seven-hue set clears the discrimination floors for arbitrary pairs. The
      class itself is carried by the Roman numeral and the label beside it, so
-     colour is a second channel rather than the only one. */
-  --bc-dna: #1668e0;
-  --bc-rna: #04ac74;
-  --bc-rt: #f4622a;
+     colour is a second channel rather than the only one.
+     The dark values are stepped for the dark surface and validated against it,
+     not flipped. */
+  --bc-dna: light-dark(#1668e0, #4d97ff);
+  --bc-rna: light-dark(#04ac74, #0fb87c);
+  --bc-rt: light-dark(#f4622a, #ff7a45);
 
   /* How much hue the fills carry. High enough that a screenful of cards reads
      as three coloured groups rather than three shades of paper — the point of
@@ -37,7 +51,9 @@
      tightest fill here and must not drop under 4.5:1. Raising these means
      re-measuring text on the fill, not just eyeballing it.
      --head-tint is lower because the compare header sits over --paper and
-     carries a full-saturation band above it already. */
+     carries a full-saturation band above it already.
+     These are the light values; the dark ones are set by selector below,
+     because light-dark() carries colours only and these are percentages. */
   --card-tint: 30%;
   --head-tint: 18%;
 
@@ -52,33 +68,24 @@
   --sans: system-ui, -apple-system, "Segoe UI", Helvetica, Arial, sans-serif;
 }
 
+:root[data-theme='light'] { color-scheme: light; }
+:root[data-theme='dark'] { color-scheme: dark; }
+
+/* The tint percentages, which light-dark() cannot carry. Both arms are needed:
+   the media query for "follow the system", the attribute for an explicit dark
+   choice — and the media query has to exclude an explicit light one, or a user
+   on a dark OS who picked light would keep the dark tints.
+   A hue laid over a dark surface reads weaker than the same proportion over
+   white, so the dark fills take more of it to land equally. */
 @media (prefers-color-scheme: dark) {
-  :root {
-    --ink: #f2ece4;
-    --ink-2: #d0c6b9;
-    --ink-3: #948a7e;
-    --paper: #1a1620;
-    --paper-2: #241f2c;
-    --rule: #39323f;
-    --rule-2: #4e4557;
-    --accent: #ff7d9d;
-    --accent-2: #ffa0b8;
-    --known: #4fd39a;
-    --varies: #e8bc63;
-    --contested: #f0a86a;
-    --unknown: #948a7e;
-    --shade: #2b2534;
-
-    /* Stepped for the dark surface and validated against it, not flipped. */
-    --bc-dna: #4d97ff;
-    --bc-rna: #0fb87c;
-    --bc-rt: #ff7a45;
-
-    /* A hue laid over a dark surface reads weaker than the same proportion
-       over white, so the dark fills take more of it to land equally. */
+  :root:not([data-theme='light']) {
     --card-tint: 34%;
     --head-tint: 22%;
   }
+}
+:root[data-theme='dark'] {
+  --card-tint: 34%;
+  --head-tint: 22%;
 }
 
 * { box-sizing: border-box; }
@@ -161,6 +168,20 @@ a:hover { color: var(--ink); }
    puts it back on hover, which is the sole affordance now. */
 .masthead-nav a { text-decoration: none; }
 .masthead-nav a:hover { text-decoration: underline; }
+
+/* Sized to the nav links rather than to the buttons in the filter bar — it
+   belongs to the masthead, not to the controls. Fixed width so cycling
+   Auto/Light/Dark does not shift the links beside it. */
+.theme-toggle {
+  font-size: 0.9rem;
+  font-family: var(--sans);
+  padding: 0.1rem 0.5rem;
+  width: 5.2rem;
+  border: 1px solid var(--rule-2);
+  background: transparent;
+  color: var(--ink-3);
+}
+.theme-toggle:hover { color: var(--ink); border-color: var(--ink-3); }
 
 main {
   max-width: 1180px;
