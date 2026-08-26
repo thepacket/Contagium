@@ -246,6 +246,16 @@ button.on { background: var(--accent); border-color: var(--accent); color: #fff;
   min-width: 0;
 }
 .card.is-curated { border-left: 3px solid var(--accent); }
+/* The curated marker rides the title line. Baseline alignment so it sits with
+   the first line of a family name long enough to wrap, and the pill does not
+   shrink when it does. */
+.card-head {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 0.5rem;
+}
+.card-head .pill { flex: none; }
 .card-title {
   font-family: var(--serif);
   font-size: 1.02rem;

@@ -187,14 +187,17 @@ function viewList() {
         el(
           'div.card',
           { class: [strategyClass(f), f.curated ? 'is-curated' : null].filter(Boolean).join(' ') || null },
-          el('a.card-title', { href: `#/family/${encodeURIComponent(f.name)}` }, f.name),
+          el(
+            'div.card-head',
+            el('a.card-title', { href: `#/family/${encodeURIComponent(f.name)}` }, f.name),
+            f.curated ? el('span.pill', { title: 'curated mechanism data available' }, 'curated') : null,
+          ),
           el('div.card-meta', [f.lineage.order, f.lineage.realm].filter(Boolean).join(' · ') || 'unassigned lineage'),
           el('div.card-meta', `${plural(f.counts.genera, 'genus', 'genera')}, ${plural(f.counts.species, 'species', 'species')}`),
           el(
             'div.card-foot',
             baltimorePill(f),
             f.hosts[0] ? el('span.pill', f.hosts[0].value) : null,
-            f.curated ? el('span.pill', { title: 'curated mechanism data available' }, 'curated') : null,
           ),
         ),
       ),
