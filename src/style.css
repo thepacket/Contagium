@@ -161,6 +161,10 @@ a:hover { color: var(--ink); }
 .masthead-nav {
   margin-left: auto;
   display: flex;
+  /* Baseline, not centre: the toggle is a bordered box among bare text, so
+     matching box centres would still leave its label sitting low. Aligning the
+     baselines puts the label on the same line as the links. */
+  align-items: baseline;
   gap: 1.1rem;
   font-size: 0.9rem;
 }
@@ -173,8 +177,9 @@ a:hover { color: var(--ink); }
    belongs to the masthead, not to the controls. Fixed width so cycling
    Auto/Light/Dark does not shift the links beside it. */
 .theme-toggle {
-  font-size: 0.9rem;
-  font-family: var(--sans);
+  /* Inherited from .masthead-nav rather than restated, so it cannot drift out
+     of step with the links if their size changes. */
+  font: inherit;
   padding: 0.1rem 0.5rem;
   width: 5.2rem;
   border: 1px solid var(--rule-2);
