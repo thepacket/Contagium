@@ -1,0 +1,17 @@
+{
+  "name": "contagium",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "npm run check:csp && vite build",
+    "preview": "vite preview",
+    "build:catalog": "node scripts/build-catalog.mjs",
+    "check:csp": "node scripts/check-csp.mjs",
+    "test": "node scripts/test.mjs"
+  },
+  "devDependencies": {
+    "vite": "^8.2.1"
+  }
+}
