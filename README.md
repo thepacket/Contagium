@@ -58,6 +58,11 @@ rather than a single confident value.
 ## What it does
 
 - **Browse and filter** all 427 families by Baltimore class, host source, or text.
+  Colour runs on replication strategy — DNA, RNA, reverse-transcribing — rather
+  than on Baltimore class. Seven hues cannot be told apart when any two families
+  can end up adjacent in the grid; three can, and three is also the real
+  structure the classes sit on. The class itself is always printed beside the
+  colour, so nothing is encoded by hue alone.
 - **Read a family** — lineage, mechanism with per-field confidence, genome and
   host composition, and the ICTV exemplar isolates with their GenBank accessions.
 - **Compare two or three side by side.** This is the view that is hard to

@@ -43,10 +43,49 @@ const plural = (n, one, many = one + 's') => `${n.toLocaleString()} ${n === 1 ? 
 
 // --- shared bits -------------------------------------------------------------
 
+// Colour runs on replication strategy rather than on Baltimore class. Seven
+// hues cannot be told apart reliably when any two of them can end up adjacent
+// in the grid, and three can; the three are also the real structure — classes
+// I–II copy DNA, III–V copy RNA, VI–VII reverse-transcribe. The class stays
+// legible because the numeral and the label are always printed beside the
+// colour, so nothing here is encoded by hue alone.
+const STRATEGY = {
+  I: 'dna', II: 'dna',
+  III: 'rna', IV: 'rna', V: 'rna',
+  VI: 'rt', VII: 'rt',
+}
+
+const STRATEGY_LEGEND = [
+  ['dna', 'DNA', 'I–II'],
+  ['rna', 'RNA', 'III–V'],
+  ['rt', 'reverse-transcribing', 'VI–VII'],
+]
+
+/** The `bc-*` class carries the strategy hue; absent when the class is unresolved. */
+const strategyClass = (f) => (f.baltimorePrimary ? `bc-${STRATEGY[f.baltimorePrimary]}` : null)
+
 function baltimorePill(f) {
   if (!f.baltimorePrimary) return el('span.pill', { title: 'genome composition does not determine a Baltimore class' }, '—')
   const label = BALTIMORE_LABEL[f.baltimorePrimary]
-  return el('span.pill.bc', { title: `Baltimore class ${f.baltimorePrimary} — ${label}` }, `${f.baltimorePrimary} · ${label}`)
+  return el(
+    'span.pill.bc',
+    {
+      class: strategyClass(f),
+      title: `Baltimore class ${f.baltimorePrimary} — ${label}`,
+    },
+    `${f.baltimorePrimary} · ${label}`,
+  )
+}
+
+/** Names the three hues, so the colour is readable without being guessed at. */
+function strategyLegend() {
+  return el(
+    'div.legend',
+    el('span.legend-label', 'Replication strategy'),
+    ...STRATEGY_LEGEND.map(([key, label, classes]) =>
+      el('span.legend-item', { class: `bc-${key}` }, el('i', { 'aria-hidden': true }), label, el('span.cls', classes)),
+    ),
+  )
 }
 
 function confidenceTag(confidence) {
@@ -147,7 +186,7 @@ function viewList() {
       ...shown.map((f) =>
         el(
           'div.card',
-          { class: f.curated ? 'is-curated' : null },
+          { class: [strategyClass(f), f.curated ? 'is-curated' : null].filter(Boolean).join(' ') || null },
           el('a.card-title', { href: `#/family/${encodeURIComponent(f.name)}` }, f.name),
           el('div.card-meta', [f.lineage.order, f.lineage.realm].filter(Boolean).join(' · ') || 'unassigned lineage'),
           el('div.card-meta', `${plural(f.counts.genera, 'genus', 'genera')}, ${plural(f.counts.species, 'species', 'species')}`),
@@ -170,6 +209,7 @@ function viewList() {
 
   root.append(
     el('div.controls', search, bcSel, hostSel, el('label.check', curatedBox, 'Curated only'), count),
+    strategyLegend(),
     grid,
   )
   apply()
@@ -202,17 +242,21 @@ function viewFamily(name) {
   ].filter(([, v]) => v)
 
   root.append(
-    el('h1', f.name),
     el(
-      'p.lineage',
-      lineage.length
-        ? lineage.flatMap(([k, v], i) => [i ? ' › ' : '', el('b', k + ' '), v])
-        : 'No higher lineage assigned in this release.',
-    ),
-    el(
-      'div.card-foot',
-      baltimorePill(f),
-      ...f.hosts.slice(0, 4).map((h) => el('span.pill', `${h.value} (${h.count})`)),
+      'div.fam-head',
+      { class: strategyClass(f) },
+      el('h1', f.name),
+      el(
+        'p.lineage',
+        lineage.length
+          ? lineage.flatMap(([k, v], i) => [i ? ' › ' : '', el('b', k + ' '), v])
+          : 'No higher lineage assigned in this release.',
+      ),
+      el(
+        'div.card-foot',
+        baltimorePill(f),
+        ...f.hosts.slice(0, 4).map((h) => el('span.pill', `${h.value} (${h.count})`)),
+      ),
     ),
   )
 
@@ -413,7 +457,16 @@ function viewCompare(query) {
 
   const table = el(
     'table.cmp',
-    el('thead', el('tr', el('th', ''), ...families.map((f) => el('th', el('a', { href: `#/family/${encodeURIComponent(f.name)}` }, f.name))))),
+    el(
+      'thead',
+      el(
+        'tr',
+        el('th', ''),
+        ...families.map((f) =>
+          el('th', { class: strategyClass(f) }, el('a', { href: `#/family/${encodeURIComponent(f.name)}` }, f.name)),
+        ),
+      ),
+    ),
     el('tbody', ...rows.map(([label, get]) => el('tr', el('td', label), ...families.map((f) => el('td', get(f)))))),
   )
   root.append(el('div.cmp-wrap', table))

@@ -16,6 +16,18 @@
   --contested: #9c5320;
   --unknown: #767d87;
   --shade: #f2efe9;
+
+  /* Baltimore classes coloured by replication strategy, not one hue each. The
+     seven classes are a taxonomy over three strategies — DNA, RNA, and the two
+     that reverse-transcribe — and three hues is what can actually be told apart
+     at a glance. Seven cannot: any two cards sit side by side in the grid, and
+     no seven-hue set clears the discrimination floors for arbitrary pairs. The
+     class itself is carried by the Roman numeral and the label beside it, so
+     colour is a second channel rather than the only one. */
+  --bc-dna: #2a78d6;
+  --bc-rna: #1baf7a;
+  --bc-rt: #eb6834;
+
   --radius: 3px;
   --measure: 74ch;
   --mono: ui-monospace, "SF Mono", SFMono-Regular, Menlo, Consolas, monospace;
@@ -39,6 +51,11 @@
     --contested: #dc9a62;
     --unknown: #837f78;
     --shade: #1f2128;
+
+    /* Stepped for the dark surface and validated against it, not flipped. */
+    --bc-dna: #3987e5;
+    --bc-rna: #199e70;
+    --bc-rt: #d95926;
   }
 }
 
@@ -233,7 +250,61 @@ button.on { background: var(--accent); border-color: var(--accent); color: #fff;
 }
 .pill.bc { font-weight: 600; }
 
+/* The strategy hue fills and outlines the chip; the text stays in the ink
+   tokens, so its contrast does not depend on which hue landed next to it. */
+.bc-dna { --bc: var(--bc-dna); }
+.bc-rna { --bc: var(--bc-rna); }
+.bc-rt { --bc: var(--bc-rt); }
+
+.pill.bc[class*='bc-'] {
+  background: color-mix(in oklab, var(--bc) 15%, var(--paper-2));
+  border-color: color-mix(in oklab, var(--bc) 50%, var(--paper-2));
+  color: var(--ink);
+}
+
+/* A colour band on the card is what the grid is scanned by — the pill alone is
+   too small to give a screenful of cards any structure. It sits on the top edge
+   so the left edge stays free for the curated marker, which is a different
+   statement and must not be crowded out. */
+.card { border-top: 2px solid var(--rule-2); }
+.card[class*='bc-'] { border-top-color: var(--bc); }
+
+/* --- strategy legend ------------------------------------------------------ */
+
+.legend {
+  display: flex;
+  align-items: center;
+  gap: 0.9rem;
+  flex-wrap: wrap;
+  font-size: 0.8rem;
+  color: var(--ink-3);
+  margin: -0.5rem 0 1.1rem;
+}
+.legend-label {
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  font-size: 0.72rem;
+}
+.legend-item { display: inline-flex; align-items: center; gap: 0.35rem; color: var(--ink-2); }
+.legend-item i {
+  width: 0.7rem;
+  height: 0.7rem;
+  border-radius: 2px;
+  background: var(--bc);
+  flex: none;
+}
+.legend-item .cls { font-family: var(--mono); font-size: 0.72rem; color: var(--ink-3); }
+
 /* --- detail -------------------------------------------------------------- */
+
+.fam-head {
+  border-left: 3px solid var(--rule-2);
+  padding-left: 0.9rem;
+  margin-bottom: 1.25rem;
+}
+.fam-head[class*='bc-'] { border-left-color: var(--bc); }
+.fam-head h1 { margin-bottom: 0.3rem; }
+.fam-head .lineage { margin-bottom: 0.75rem; }
 
 .lineage {
   font-family: var(--mono);
@@ -368,6 +439,14 @@ button.on { background: var(--accent); border-color: var(--accent); color: #fff;
   text-transform: none;
   letter-spacing: 0;
   border-bottom: 1px solid var(--rule-2);
+  border-top: 3px solid transparent;
+}
+/* Two families of the same strategy share a colour here, which is the point:
+   the compare view exists to show where mechanisms diverge, and a shared band
+   above two columns says the divergence is happening within one strategy. */
+.cmp thead th[class*='bc-'] {
+  border-top-color: var(--bc);
+  background: color-mix(in oklab, var(--bc) 7%, var(--paper));
 }
 .cmp tbody tr:hover td { background: var(--shade); }
 
