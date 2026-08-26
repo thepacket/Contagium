@@ -609,9 +609,10 @@ function viewAbout() {
     el('h2', 'What this is not'),
     el(
       'p',
-      'It is not a diagnostic tool and carries no clinical guidance. It is not exhaustive on mechanism — 25 of 427 ' +
-        'families have depth data today. And it is not a substitute for the primary literature: where a value is ' +
-        'contested, the honest move is to read the papers, not to trust a table cell.',
+      'It is not a diagnostic tool and carries no clinical guidance. It is not exhaustive on mechanism — ' +
+        `${META.counts.curated} of ${META.counts.families} families have depth data today. And it is not a ` +
+        'substitute for the primary literature: where a value is contested, the honest move is to read the ' +
+        'papers, not to trust a table cell.',
     ),
   )
 }
