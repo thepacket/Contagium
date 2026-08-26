@@ -415,6 +415,12 @@ function viewFamily(name) {
             'tr',
             el('td', el('span.sp', e.species)),
             el('td', e.virus ?? '', e.exemplar ? null : el('span.addl', { title: 'additional isolate, not the ICTV exemplar for this species' }, 'additional')),
+            // The abbreviation is the name a reader recognises — SARS-CoV-2,
+            // MERS-CoV, HIV-1 — and it is often the only form they know. It was
+            // in the data and searchable but never printed, so scanning a
+            // family for "SARS-CoV-2" found nothing while the row sat there
+            // reading "severe acute respiratory syndrome coronavirus 2".
+            el('td.abbr', e.abbreviation ?? ''),
             el(
               'td.acc',
               e.accession
