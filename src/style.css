@@ -152,8 +152,12 @@ a:hover { color: var(--accent-2); }
   gap: 1.1rem;
   font-size: 0.9rem;
 }
-.masthead-nav a { text-decoration: none; }
-.masthead-nav a:hover { text-decoration: underline; }
+/* Nav sits in the ink tokens, not the accent: in dark mode that is white, and
+   in light mode it stays legible against the cream masthead, which a literal
+   white would not. Hover is carried by the underline alone so the colour does
+   not flash on the way past. */
+.masthead-nav a { text-decoration: none; color: var(--ink); }
+.masthead-nav a:hover { text-decoration: underline; color: var(--ink); }
 
 main {
   max-width: 1180px;
