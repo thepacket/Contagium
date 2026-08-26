@@ -94,8 +94,13 @@ body {
   line-height: 1.55;
 }
 
-a { color: var(--accent); }
-a:hover { color: var(--accent-2); }
+/* Links sit in the ink tokens, not the accent: white on the dark theme, and
+   still legible on the light one, which a literal white would not be. Colour
+   therefore no longer distinguishes a link from body text, so the underline
+   has to — leave it on anywhere it is not deliberately removed, and have the
+   places that do remove it (masthead nav, card titles) put it back on hover. */
+a { color: var(--ink); }
+a:hover { color: var(--ink); }
 
 .skip {
   position: absolute;
@@ -152,12 +157,10 @@ a:hover { color: var(--accent-2); }
   gap: 1.1rem;
   font-size: 0.9rem;
 }
-/* Nav sits in the ink tokens, not the accent: in dark mode that is white, and
-   in light mode it stays legible against the cream masthead, which a literal
-   white would not. Hover is carried by the underline alone so the colour does
-   not flash on the way past. */
-.masthead-nav a { text-decoration: none; color: var(--ink); }
-.masthead-nav a:hover { text-decoration: underline; color: var(--ink); }
+/* Colour comes from the global `a` rule; the nav only drops the underline and
+   puts it back on hover, which is the sole affordance now. */
+.masthead-nav a { text-decoration: none; }
+.masthead-nav a:hover { text-decoration: underline; }
 
 main {
   max-width: 1180px;
@@ -263,7 +266,7 @@ button.on { background: var(--accent); border-color: var(--accent); color: #fff;
   color: var(--ink);
   overflow-wrap: anywhere;
 }
-.card-title:hover { color: var(--accent); text-decoration: underline; }
+.card-title:hover { text-decoration: underline; }
 .card-meta { font-size: 0.8rem; color: var(--ink-3); }
 /* A tinted card costs the meta line some contrast — the fill darkens the paper
    under text that was already the lightest ink in the set. The size keeps it
