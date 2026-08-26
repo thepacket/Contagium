@@ -1,8 +1,8 @@
 # Contagium — a comparative virus family reference
 
 Every virus family in the current ICTV taxonomy, with curated replication
-mechanism, capsid, envelope and receptor data for a first group of 25 — cited,
-and explicit about what is not known.
+mechanism, capsid, envelope and receptor data for a group of 40 — cited, and
+explicit about what is not known.
 
 The name is Beijerinck's: *contagium vivum fluidum*, the term he coined in 1898
 for something infectious that passed through a filter no bacterium could. It was
@@ -39,11 +39,13 @@ genome composition, host source and counts, derived directly from the VMR
 spreadsheet. Nothing in it is hand-typed, so it is complete and as current as
 the release ingested.
 
-**Depth — 25 families.** Capsid symmetry, envelope, entry receptor, replication
+**Depth — 40 families.** Capsid symmetry, envelope, entry receptor, replication
 site and tropism. No open source publishes these in bulk; they are assembled by
-hand from ViralZone and the literature. The first group was chosen to cover all
-seven Baltimore classes, so a comparison has real mechanistic contrast rather
-than seven variations on one theme.
+hand from ViralZone and the literature. The first group of 25 was chosen to
+cover all seven Baltimore classes, so a comparison has real mechanistic contrast
+rather than seven variations on one theme. The next 15 were the families that
+already had a ViralZone factsheet at family rank — the only tranche where the
+source supports a family-level claim without inference.
 
 A family with no depth layer is not hidden and is not an error. The interface
 distinguishes two different absences:
@@ -106,9 +108,13 @@ unrecoverable error, so it is checked rather than trusted.
 
 **Bacteriophage.** ICTV dissolved the morphology-based families (Siphoviridae,
 Myoviridae and the rest) and the replacement taxonomy is still settling. That
-instability does not belong in a first build. Plant and insect viruses are
-absent from the depth layer for the same budget reason rather than any
-principled one — Virgaviridae is the obvious first addition.
+instability does not belong in a first build.
+
+Plant, insect and fungal viruses are no longer wholly absent: the second tranche
+brought in Tombusviridae, Nodaviridae, Metaviridae and Genomoviridae, because
+the selection rule was "has a family-rank factsheet" rather than "infects a
+vertebrate". Coverage there is still incidental rather than deliberate, and
+Virgaviridae remains the obvious next plant addition.
 
 ## Sources and licences
 

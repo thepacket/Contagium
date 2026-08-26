@@ -1,4 +1,4 @@
-// Curated mechanism data for the first family group.
+// Curated mechanism data for the depth layer.
 //
 // The ICTV VMR gives taxonomy, genome composition and host source for all 427
 // families, machine-readable and complete. It does not carry the fields that
@@ -15,9 +15,19 @@
 //       contested   — reported, but the literature disagrees
 //       unknown     — not characterised; rendered as absent, not guessed
 //   * `note` carries the caveat when a single value would mislead.
+//   * Omitting a key and writing `{ value: null, confidence: 'unknown' }` are
+//     different claims, and the UI prints them differently:
+//       omitted        -> "not curated"      — we have not established it
+//       null + unknown -> "not characterised" — the field has not established it
+//     Use null only with positive evidence of non-characterisation, the way
+//     Poxviridae's receptor does. A factsheet that is merely silent on a field
+//     is not that evidence: omit the key instead. Getting this backwards
+//     attributes our own gaps to virology, which is the worse error.
 //   * Nothing here is a number the VMR could have given us. Baltimore class,
 //     host range and genome composition are derived in build-catalog.mjs from
-//     the VMR itself rather than typed out again.
+//     the VMR itself rather than typed out again. Host range in particular is
+//     why most entries carry no `tropism`: the family factsheets often give
+//     only the host, which the skeleton layer already has.
 //
 // Source for mechanism fields unless otherwise noted: ViralZone (SIB Swiss
 // Institute of Bioinformatics), CC BY 4.0. Per-cell primary-literature
@@ -99,6 +109,34 @@ export const FAMILIES = {
     notable: ['JC polyomavirus', 'BK polyomavirus', 'Simian virus 40'],
   },
 
+  Alloherpesviridae: {
+    capsid: { value: 'icosahedral, T=16', confidence: 'established', note: '162 capsomers' },
+    envelope: { value: true, confidence: 'established', note: 'spherical to pleomorphic, 150–200 nm' },
+    replicationSite: { value: 'nucleus', confidence: 'established', note: 'the capsid is transported to the nuclear pore and the genome released into the nucleus' },
+    genomeSize: { value: '134–248 kb', confidence: 'established' },
+    segments: { value: 1, confidence: 'established' },
+    distinctive: 'The herpesviruses of fish and amphibians, placed in their own family rather than with the mammalian and avian herpesviruses.',
+    notable: ['Cyprinid herpesvirus 3', 'Ictalurid herpesvirus 1', 'Ranid herpesvirus 1'],
+  },
+
+  Iridoviridae: {
+    capsid: { value: 'icosahedral, T=189–217', confidence: 'established' },
+    envelope: {
+      value: 'varies',
+      confidence: 'varies',
+      note: 'externally enveloped when budded from the cell membrane; released non-enveloped by lysis, so both forms are infectious',
+    },
+    replicationSite: {
+      value: 'nucleus and cytoplasm',
+      confidence: 'established',
+      note: 'initial transcription in the nucleus; progeny DNA concatemers form in cytoplasmic viral factories',
+    },
+    tropism: { value: 'hemocytes and adipose tissue cells', confidence: 'varies', note: 'given for the insect-infecting members; the factsheet does not give a tissue tropism for the fish and amphibian members' },
+    genomeSize: { value: '140–303 kb', confidence: 'established' },
+    distinctive: 'Splits replication across both compartments — transcription starts in the nucleus, then moves to cytoplasmic factories.',
+    notable: ['Frog virus 3', 'Lymphocystis disease virus 1', 'Invertebrate iridescent virus 6'],
+  },
+
   // ---- Class II: ssDNA ------------------------------------------------------
   Parvoviridae: {
     capsid: { value: 'icosahedral, T=1', confidence: 'established', note: '18–26 nm — among the smallest virions known' },
@@ -116,6 +154,34 @@ export const FAMILIES = {
     notable: ['Human parvovirus B19', 'Adeno-associated virus 2'],
   },
 
+  Anelloviridae: {
+    capsid: { value: 'icosahedral, T=1', confidence: 'established' },
+    envelope: { value: false, confidence: 'established' },
+    replicationSite: { value: 'nucleus', confidence: 'established' },
+    genomeSize: { value: '~3.8 kb', confidence: 'established', note: 'circular ssDNA' },
+    distinctive: 'Small circular ssDNA viruses carried across a very wide host range — humans, chimpanzees, African monkeys, tupaia, pigs, cattle, sheep and chickens.',
+    notable: ['Torque teno virus 1', 'Torque teno mini virus 1', 'Torque teno midi virus 1'],
+  },
+
+  Circoviridae: {
+    capsid: { value: 'icosahedral, T=1', confidence: 'established', note: '12 pentagonal trumpet-shaped pentamers' },
+    envelope: { value: false, confidence: 'established' },
+    replicationSite: { value: 'nucleus', confidence: 'established', note: 'rolling-circle replication' },
+    genomeSize: { value: '1.8–3.8 kb', confidence: 'established', note: 'circular ssDNA' },
+    segments: { value: 1, confidence: 'established' },
+    distinctive: 'Copies its circular genome by rolling-circle replication in the nucleus, inside a T=1 capsid built from twelve trumpet-shaped pentamers.',
+    notable: ['Porcine circovirus 2', 'Beak and feather disease virus'],
+  },
+
+  Genomoviridae: {
+    capsid: { value: 'icosahedral, T=1', confidence: 'established' },
+    envelope: { value: false, confidence: 'established' },
+    genomeSize: { value: '~2.17 kb', confidence: 'established', note: 'circular ssDNA' },
+    segments: { value: 1, confidence: 'established' },
+    distinctive: 'Spans hosts from humans, other mammals and birds all the way to fungi — a host range that crosses kingdoms within one family.',
+    notable: ['Sclerotinia sclerotiorum hypovirulence associated DNA virus 1', 'Human associated gemyvongvirus 1'],
+  },
+
   // ---- Class III: dsRNA -----------------------------------------------------
   Sedoreoviridae: {
     capsid: { value: 'icosahedral, multilayered', confidence: 'established', note: 'rotavirus particles are triple-layered' },
@@ -131,6 +197,21 @@ export const FAMILIES = {
     segments: { value: 11, confidence: 'established', note: '11 for rotavirus; segment number varies across the family' },
     distinctive: 'Keeps its dsRNA genome inside the capsid throughout replication, which avoids exposing it to cytoplasmic dsRNA sensors.',
     notable: ['Rotavirus A'],
+  },
+
+  Birnaviridae: {
+    capsid: { value: 'icosahedral, T=13', confidence: 'established' },
+    envelope: { value: false, confidence: 'established' },
+    replicationSite: { value: 'cytoplasm', confidence: 'established' },
+    tropism: {
+      value: 'varies',
+      confidence: 'varies',
+      note: 'IBDV infects the precursors of antibody-producing B cells in the bursa of Fabricius; IPNV infects salmonid fish',
+    },
+    genomeSize: { value: '~6 kb', confidence: 'established', note: 'two segments of about 2.3–3 kb each' },
+    segments: { value: 2, confidence: 'established', note: 'segments A and B' },
+    distinctive: 'Infectious bursal disease virus targets the precursors of antibody-producing B cells in the bursa of Fabricius, so the damage falls on the host immune system itself.',
+    notable: ['Infectious pancreatic necrosis virus', 'Infectious bursal disease virus', 'Drosophila X virus'],
   },
 
   // ---- Class IV: +ssRNA -----------------------------------------------------
@@ -236,6 +317,69 @@ export const FAMILIES = {
     segments: { value: 1, confidence: 'established' },
     distinctive: 'Exists in two physical forms depending on which compartment it is in — a rare case where "enveloped" is not a fixed property of the family.',
     notable: ['Hepatitis E virus'],
+  },
+
+  Arteriviridae: {
+    envelope: { value: true, confidence: 'established', note: 'spherical, 45–60 nm' },
+    receptor: {
+      value: ['sialoadhesin'],
+      confidence: 'varies',
+      note: 'reported for PRRSV; the family factsheet names no receptor for the other genera',
+    },
+    replicationSite: {
+      value: 'cytoplasm',
+      confidence: 'established',
+      note: 'in viral factories, with budding at membranes of the ER, intermediate compartments and/or Golgi',
+    },
+    tropism: {
+      value: 'macrophages',
+      confidence: 'established',
+      note: 'EAV in lung macrophages then lymph nodes; PRRSV in alveolar and other tissue macrophages, later in testicular germ cells',
+    },
+    genomeSize: { value: '12–16 kb', confidence: 'established' },
+    segments: { value: 1, confidence: 'established' },
+    distinctive: 'Nidovirales with a macrophage tropism rather than the epithelial one the order is better known for.',
+    notable: ['Equine arteritis virus', 'Porcine reproductive and respiratory syndrome virus', 'Simian hemorrhagic fever virus'],
+  },
+
+  Astroviridae: {
+    capsid: { value: 'icosahedral, T=3', confidence: 'established' },
+    envelope: { value: false, confidence: 'established' },
+    replicationSite: {
+      value: 'cytoplasm',
+      confidence: 'established',
+      note: 'in viral factories made of ER-derived membrane vesicles',
+    },
+    tropism: { value: 'enterocytes', confidence: 'established' },
+    genomeSize: { value: '6.8–7 kb', confidence: 'established' },
+    segments: { value: 1, confidence: 'established' },
+    distinctive: 'Builds its replication factories out of membrane vesicles derived from the ER, and keeps to a single narrow target: the enterocytes of the gut.',
+    notable: ['Human astrovirus 1', 'Turkey astrovirus 1'],
+  },
+
+  Nodaviridae: {
+    capsid: { value: 'icosahedral, T=3', confidence: 'established', note: '180 protein subunits, about 30 nm' },
+    envelope: { value: false, confidence: 'established' },
+    replicationSite: { value: 'cytoplasm', confidence: 'established', note: 'in cytoplasmic viral factories' },
+    tropism: {
+      value: 'nervous tissue and retina',
+      confidence: 'varies',
+      note: 'betanodaviruses cause viral encephalopathy and retinopathy in fish; the alphanodaviruses infect insects',
+    },
+    genomeSize: { value: '~4.5 kb', confidence: 'established', note: 'RNA1 3.1 kb and RNA2 1.4 kb' },
+    segments: { value: 2, confidence: 'established', note: 'a subgenomic RNA3 is produced during replication' },
+    distinctive: 'Splits a small genome across two segments, RNA1 and RNA2, and the fish-infecting betanodaviruses turn that into encephalopathy and retinopathy.',
+    notable: ['Nodamura virus', 'Flock House virus', 'Striped jack nervous necrosis virus'],
+  },
+
+  Tombusviridae: {
+    capsid: { value: 'icosahedral, T=3', confidence: 'established', note: '180 protein subunits, 28–34 nm' },
+    envelope: { value: false, confidence: 'established' },
+    replicationSite: { value: 'cytoplasm', confidence: 'established', note: 'in cytoplasmic viral factories' },
+    genomeSize: { value: '4–5.4 kb', confidence: 'established' },
+    segments: { value: 1, confidence: 'varies', note: 'monopartite except Dianthovirus, which is bipartite' },
+    distinctive: 'Monopartite throughout except Dianthovirus, whose genome is split in two — a single-genus exception inside an otherwise uniform family.',
+    notable: ['Tomato bushy stunt virus', 'Turnip crinkle virus', 'Maize chlorotic mottle virus'],
   },
 
   // ---- Class V: −ssRNA ------------------------------------------------------
@@ -379,6 +523,58 @@ export const FAMILIES = {
     notable: ['Rift Valley fever phlebovirus', 'Dabie bandavirus (SFTSV)', 'Toscana phlebovirus'],
   },
 
+  Bornaviridae: {
+    envelope: { value: true, confidence: 'established', note: 'spherical, 70–130 nm' },
+    replicationSite: {
+      value: 'nucleus',
+      confidence: 'established',
+      note: 'ribonucleocapsids migrate to the nucleus after entry and progeny leave by nuclear pore export — unusual among the −ssRNA families, which otherwise replicate in the cytoplasm',
+    },
+    tropism: {
+      value: 'neurons and astrocytes',
+      confidence: 'established',
+      note: 'oligodendrocytes and ependymal cells can also be infected',
+    },
+    genomeSize: { value: '~8.9 kb', confidence: 'established' },
+    distinctive: 'Replicates in the nucleus, which almost no other negative-strand RNA family does.',
+    notable: ['Borna disease virus 1', 'Mammalian 1 orthobornavirus'],
+  },
+
+  Nyamiviridae: {
+    envelope: { value: true, confidence: 'established', note: 'spherical, 100–130 nm' },
+    replicationSite: {
+      value: 'nucleus',
+      confidence: 'established',
+      note: 'ribonucleocapsids migrate to the nucleus and exit by nuclear pore export',
+    },
+    genomeSize: { value: '~11.6 kb', confidence: 'established' },
+    segments: { value: 1, confidence: 'established' },
+    distinctive: 'Another negative-strand RNA family that replicates in the nucleus rather than the cytoplasm, carried between ticks and birds.',
+    notable: ['Nyamanini nyavirus', 'Midway nyavirus'],
+  },
+
+  Peribunyaviridae: {
+    envelope: { value: true, confidence: 'established', note: 'spherical, 80–120 nm' },
+    replicationSite: { value: 'cytoplasm', confidence: 'established', note: 'budding at the Golgi apparatus' },
+    tropism: {
+      value: 'central nervous system, various organs and vascular endothelium',
+      confidence: 'established',
+    },
+    genomeSize: { value: 'L 6.8–12 kb, M 3.2–4.9 kb, S 1–3 kb', confidence: 'established' },
+    segments: { value: 3, confidence: 'established', note: 'L, M and S' },
+    distinctive: 'Arthropod-vectored with rodent and insect reservoirs; ticks and mosquitoes carry it to humans incidentally.',
+    notable: ['Bunyamwera orthobunyavirus', 'La Crosse virus', 'Oropouche virus', 'Schmallenberg virus'],
+  },
+
+  Sunviridae: {
+    envelope: { value: true, confidence: 'established', note: 'spherical' },
+    replicationSite: { value: 'cytoplasm', confidence: 'established' },
+    genomeSize: { value: '~17 kb', confidence: 'established' },
+    segments: { value: 1, confidence: 'established' },
+    distinctive: 'A negative-strand RNA family described from snakes, replicating in the cytoplasm with a genome of about 17 kb.',
+    notable: ['Reptile sunshinevirus 1'],
+  },
+
   // ---- Class VI: ssRNA-RT ---------------------------------------------------
   Retroviridae: {
     capsid: { value: 'varies', confidence: 'varies', note: 'lentiviral cores are conical; other genera form spherical or polyhedral cores' },
@@ -394,6 +590,24 @@ export const FAMILIES = {
     segments: { value: 1, confidence: 'established', note: 'one genome, but packaged as two identical copies' },
     distinctive: 'Integrates into host DNA as a provirus. That is why infection is lifelong, and why cure requires clearing a latent reservoir rather than suppressing replication.',
     notable: ['Human immunodeficiency virus 1', 'Human T-cell leukemia virus 1'],
+  },
+
+  Metaviridae: {
+    capsid: { value: 'icosahedral, T=9', confidence: 'established' },
+    envelope: {
+      value: 'uncertain',
+      confidence: 'unknown',
+      note: 'the family factsheet states only that virions "might be enveloped"',
+    },
+    replicationSite: {
+      value: 'nucleus',
+      confidence: 'established',
+      note: 'the reverse-transcribed dsDNA is integrated into the host genome by a viral integrase',
+    },
+    genomeSize: { value: '~7–11 kb', confidence: 'established' },
+    segments: { value: 1, confidence: 'established' },
+    distinctive: 'The Ty3/Gypsy retrotransposon lineage — mostly integrated elements rather than viruses that leave the cell.',
+    notable: ['Saccharomyces cerevisiae Ty3 virus', 'Drosophila melanogaster Gypsy virus'],
   },
 
   // ---- Class VII: dsDNA-RT --------------------------------------------------
