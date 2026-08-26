@@ -1,5 +1,7 @@
 # Deploying to fly.io
 
+Deployed at **[contagium.fly.dev](https://contagium.fly.dev)**.
+
 Contagium has no server component. The Docker image is a Vite build served by
 nginx, so a deployment is static files behind Fly's TLS terminator — no
 secrets, no environment variables, no volumes, no database.
@@ -115,4 +117,13 @@ To repeat the local half:
 docker build -t contagium:test . && docker run --rm -p 8099:80 contagium:test
 ```
 
-Not yet done: no Fly app has been created and nothing has been deployed.
+And on https://contagium.fly.dev, after the first deploy:
+
+- plain http redirects with a 301; all four security headers survive Fly's
+  proxy unchanged, CSP included
+- the caching split holds — `no-cache` on the shell, `immutable` on the hashed
+  asset
+- Fly's edge re-encodes: the bundle arrives `content-encoding: br` at 117 kB
+  against 447 kB uncompressed
+- `/healthz` 200, both machines passing their check
+- the app loaded and rendered with a clean console

@@ -1,7 +1,9 @@
 # fly.io configuration for Contagium.
 #
 # The app is static, so a machine holds no state and can be stopped between
-# visits. `fly launch` will rewrite `app` if the name is already taken.
+# visits. Reordered and re-emitted by `fly launch`; the values are unchanged.
+#
+# See https://fly.io/docs/reference/configuration/
 
 app = 'contagium'
 primary_region = 'yyz'
@@ -19,8 +21,8 @@ primary_region = 'yyz'
 
   [http_service.concurrency]
     type = 'requests'
-    soft_limit = 200
     hard_limit = 250
+    soft_limit = 200
 
   [[http_service.checks]]
     interval = '30s'
