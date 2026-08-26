@@ -494,6 +494,21 @@ button.on { background: var(--accent); border-color: var(--accent); color: #fff;
 .exemplars td { padding: 0.3rem 0.9rem 0.3rem 0; border-bottom: 1px solid var(--rule); vertical-align: top; }
 .exemplars .sp { font-style: italic; }
 .exemplars .acc { font-family: var(--mono); font-size: 0.82rem; color: var(--ink-3); }
+/* Marks the rows that are not the ICTV exemplar for their species. Quiet, but
+   present: which isolate is the designated reference is a real distinction and
+   the table now carries both. */
+.exemplars .addl {
+  font-family: var(--mono);
+  font-size: 0.68rem;
+  letter-spacing: 0.03em;
+  text-transform: uppercase;
+  color: var(--ink-3);
+  border: 1px solid var(--rule);
+  border-radius: 2px;
+  padding: 0.02rem 0.3rem;
+  margin-left: 0.45rem;
+  white-space: nowrap;
+}
 
 .srcline { font-size: 0.85rem; color: var(--ink-3); margin-top: 0.5rem; }
 

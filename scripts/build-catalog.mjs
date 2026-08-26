@@ -146,13 +146,26 @@ function main() {
     if (row.Genus) f.genera.add(row.Genus)
     if (row.Species) f.species.add(row.Species)
     if (row.Subfamily) f.subfamilies.add(row.Subfamily)
-    // "E" marks the exemplar isolate ICTV designates for the species.
-    if (row['Exemplar or additional isolate'] === 'E' && row.Species && f.exemplars.length < 8) {
+    // Every isolate the VMR carries, exemplar and additional alike, and all of
+    // them — the catalog does not decide what is worth showing.
+    //
+    // It used to keep the first eight "E" rows per family, which was two
+    // silent restrictions at once. The cap dropped 85.8% of the release and cut
+    // by spreadsheet order, so Coronaviridae showed eight Alphacoronavirus bat
+    // isolates and no SARS or MERS. The "E" filter then hid SARS-CoV-2 even
+    // with the cap lifted, because ICTV designates SARS-CoV as the exemplar for
+    // Betacoronavirus pandemicum and SARS-CoV-2 is an additional isolate of the
+    // same species.
+    //
+    // `exemplar` keeps the distinction, which is real and worth showing — it
+    // just is not a reason to drop the row.
+    if (row.Species) {
       f.exemplars.push({
         species: row.Species,
         virus: row['Virus name(s)'] || null,
         abbreviation: row['Virus name abbreviation(s)'] || null,
         accession: row['Virus GENBANK accession'] || null,
+        exemplar: row['Exemplar or additional isolate'] === 'E',
       })
     }
   }

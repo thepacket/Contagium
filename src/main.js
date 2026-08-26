@@ -199,7 +199,7 @@ function viewList() {
 
   const search = el('input', {
     type: 'search',
-    placeholder: 'Search families, genera, hosts…',
+    placeholder: 'Search families, viruses, accessions…',
     value: listState.q,
     'aria-label': 'Search families',
   })
@@ -236,7 +236,17 @@ function viewList() {
       if (f.name.toLowerCase().includes(q)) return true
       if (f.lineage.order?.toLowerCase().includes(q)) return true
       if (f.lineage.realm?.toLowerCase().includes(q)) return true
-      if (f.exemplars.some((e) => `${e.species} ${e.virus ?? ''}`.toLowerCase().includes(q))) return true
+      // Abbreviation and accession are searched too, because they are what a
+      // reader actually types. "SARS-CoV-2" is an abbreviation and appears in
+      // no species or virus name — searching those two alone returned nothing
+      // for the best-known virus in the catalog.
+      if (
+        f.exemplars.some((e) =>
+          `${e.species} ${e.virus ?? ''} ${e.abbreviation ?? ''} ${e.accession ?? ''}`.toLowerCase().includes(q),
+        )
+      ) {
+        return true
+      }
       return false
     })
 
@@ -391,15 +401,20 @@ function viewFamily(name) {
 
   if (f.exemplars.length) {
     root.append(
-      el('h2', 'ICTV exemplar isolates'),
-      el('p.lede', 'The isolate ICTV designates as the reference for each species — the anchor a sequence record hangs on.'),
+      el('h2', 'ICTV isolates'),
+      el(
+        'p.lede',
+        `Every isolate ${f.name} carries in ${META.msl} — ${plural(f.exemplars.length, 'isolate')}, complete. ` +
+          'An exemplar is the one ICTV designates as the reference for its species, the anchor a sequence record ' +
+          'hangs on; the rest are additional isolates of those same species and are marked as such.',
+      ),
       el(
         'table.exemplars',
         ...f.exemplars.map((e) =>
           el(
             'tr',
             el('td', el('span.sp', e.species)),
-            el('td', e.virus ?? ''),
+            el('td', e.virus ?? '', e.exemplar ? null : el('span.addl', { title: 'additional isolate, not the ICTV exemplar for this species' }, 'additional')),
             el(
               'td.acc',
               e.accession

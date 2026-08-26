@@ -66,7 +66,11 @@ rather than a single confident value.
   structure the classes sit on. The class itself is always printed beside the
   colour, so nothing is encoded by hue alone.
 - **Read a family** — lineage, mechanism with per-field confidence, genome and
-  host composition, and the ICTV exemplar isolates with their GenBank accessions.
+  host composition, and every isolate the release carries with its GenBank
+  accession, exemplar and additional alike.
+- **Search by what you actually know** — family, order, realm, species, virus
+  name, abbreviation or accession. `SARS-CoV-2` and `MN908947` both find
+  Coronaviridae.
 - **Compare two or three side by side.** This is the view that is hard to
   assemble by hand, and the reason the project exists in this shape.
 
@@ -91,6 +95,15 @@ consequence.
 `scripts/lib/xlsx.mjs` is a small dependency-free xlsx reader. It exists so the
 build pipeline does not carry a spreadsheet library for the sake of one file
 read once a year.
+
+**The catalog is complete, and that is what it costs.** All 16,674 isolate rows
+ship in the bundle — 423 kB gzipped, up from 96 kB when the build kept only the
+first eight exemplars per family. That cap was dropping 85.8% of the release and
+cutting by spreadsheet order, so Coronaviridae listed eight *Alphacoronavirus*
+bat isolates and no SARS at all. A reference that quietly withholds five sixths
+of its source is worse than a large one, so the bundle is the price. If it ever
+needs to come down, the fix is splitting the isolate tables out of the main
+chunk and loading them per family — not reinstating a cap.
 
 ## Taxonomy churn is a live risk
 
