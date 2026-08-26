@@ -54,6 +54,19 @@ for (const file of fs.readdirSync('src', { recursive: true })) {
   if (/\beval\s*\(|new Function\s*\(/.test(code)) problems.push(`${path} evaluates code at runtime`)
 }
 
+// The deployment must serve the policy this file checks against. nginx is the
+// only place it is actually applied — there is no <meta> fallback — so a drift
+// between the two would mean the build passes while production either blocks
+// something the app needs or permits something this check forbids.
+const headers = 'security-headers.conf'
+if (fs.existsSync(headers)) {
+  const served = fs.readFileSync(headers, 'utf8').match(/Content-Security-Policy\s+"([^"]*)"/)
+  if (!served) problems.push(`${headers} sets no Content-Security-Policy`)
+  else if (served[1] !== POLICY) problems.push(`${headers} serves a different policy:\n      ${served[1]}`)
+} else {
+  problems.push(`${headers} is missing — the deployment would serve no CSP`)
+}
+
 if (problems.length) {
   console.error('CSP check failed:')
   for (const p of problems) console.error(`  - ${p}`)

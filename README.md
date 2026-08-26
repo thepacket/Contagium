@@ -29,6 +29,9 @@ npm run build:catalog
 npm test
 ```
 
+`npm run build` produces the static bundle. Deployment — a Vite build served by
+nginx on fly.io — is in [DEPLOY.md](DEPLOY.md).
+
 ## Two layers, kept visibly separate
 
 **Skeleton — every family.** All 427 families in ICTV MSL41, with taxonomy,

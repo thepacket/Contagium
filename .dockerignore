@@ -1,0 +1,21 @@
+node_modules
+dist
+.git
+.gitignore
+.github
+.claude
+.vite
+
+# The ICTV spreadsheet and the ViralZone index are inputs to
+# `npm run build:catalog`, which runs at development time. The catalog they
+# produce is committed as src/data/catalog.js, so the image build never reads
+# them.
+data-src
+
+*.local
+.DS_Store
+Dockerfile
+.dockerignore
+fly.toml
+*.md
+docs
