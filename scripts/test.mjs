@@ -165,6 +165,48 @@ check('curated families list notable members', () => {
   }
 })
 
+check('no accession id carries a separator', () => {
+  // The VMR packs several accessions into one cell; each has to come out as its
+  // own id or the NCBI link it builds cannot resolve.
+  for (const f of FAMILIES) {
+    for (const e of f.exemplars) {
+      for (const a of e.accessions) {
+        assert(!/[;:\s]/.test(a.id), `${f.name}: unparsed accession "${a.id}"`)
+      }
+    }
+  }
+})
+
+check('no established segment count is contradicted by its own isolates', () => {
+  // The check that build-catalog enforces, kept here too so the invariant is
+  // visible in the suite rather than only as a build-time exit code. Eight
+  // families asserted a segment count their own isolate table disproved —
+  // Flaviviridae claimed 1 while listing Guaico Culex virus with 5.
+  for (const f of FAMILIES) {
+    const seg = f.curated?.segments
+    if (!seg || typeof seg.value !== 'number' || seg.confidence !== 'established') continue
+    for (const e of f.exemplars) {
+      const named = new Set(
+        e.accessions
+          .map((a) => a.label)
+          .filter((l) => l && /^(seg[_ ]?\d+|RNA[ _-]?\d+|DNA[ _-]?[A-Z0-9]+)$/i.test(l))
+          .map((l) => l.toLowerCase().replace(/[ _-]/g, '')),
+      )
+      assert(
+        named.size <= seg.value,
+        `${f.name} claims ${seg.value} segments (established) but ${e.virus ?? e.species} lists ${named.size}`,
+      )
+    }
+  }
+})
+
+check('the taxa this catalog cannot hold are counted', () => {
+  // A family-keyed catalog drops family-less taxa. That is defensible; leaving
+  // the totals looking like the whole MSL is not.
+  assert(META.unplaced, 'META.unplaced is missing')
+  assert(META.unplaced.species > 0 && META.unplaced.genera > 0, 'unplaced counts look wrong')
+})
+
 // --- provenance --------------------------------------------------------------
 
 check('every source is named with a licence', () => {

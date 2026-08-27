@@ -50,6 +50,44 @@ const BALTIMORE = {
 }
 
 /**
+ * Split the VMR's accession cell into individual records.
+ *
+ * The column is not one accession. It holds a segmented genome as
+ * "Seg_1: KM461666; Seg_2: KM461667", a genome assembled from partial records
+ * as "partial: AF249332; partial: AF338822", and sometimes a bare
+ * semicolon-separated list. Treating the whole cell as one identifier produced
+ * a single NCBI link containing the semicolons and spaces, which cannot
+ * resolve — 2,354 of 16,674 isolates had a dead link that way.
+ *
+ * Returns `[{ id, label? }]`, label present only when the cell named the part.
+ */
+export function parseAccessions(cell) {
+  if (!cell) return []
+  return cell
+    .split(';')
+    .map((part) => part.trim())
+    .filter(Boolean)
+    .map((part) => {
+      const m = /^(.*?)\s*:\s*(\S+)$/.exec(part)
+      if (m) return { label: m[1].trim(), id: m[2] }
+      return { id: part.split(/\s+/)[0] }
+    })
+    .filter((a) => a.id)
+}
+
+/** Labels that name a genome segment, as opposed to "partial" or a bare list. */
+const SEGMENT_LABEL = /^(seg[_ ]?\d+|RNA[ _-]?\d+|DNA[ _-]?[A-Z0-9]+)$/i
+
+/** How many distinct segments an isolate's accession cell actually names. */
+export function segmentsNamed(accessions) {
+  const seen = new Set()
+  for (const a of accessions) {
+    if (a.label && SEGMENT_LABEL.test(a.label)) seen.add(a.label.toLowerCase().replace(/[ _-]/g, ''))
+  }
+  return seen.size
+}
+
+/**
  * Map one Genome value to a Baltimore class. Some families carry compound
  * values ("ssRNA(-); ssRNA(+/-)" for the ambisense bunyavirals), which resolve
  * to a single class only when every part agrees.
@@ -109,11 +147,21 @@ function main() {
 
   const families = new Map()
   let unclassified = 0
+  // ICTV assigns no family to a large part of the release — mostly
+  // Caudoviricetes phage genera left unplaced after the morphology-based
+  // families were dissolved. A family-keyed catalog cannot hold them, which is
+  // defensible, but the totals then differ from the published MSL and that has
+  // to be stated rather than quietly absorbed. Counted here so the UI can say
+  // exactly what is missing.
+  const unplacedSpecies = new Set()
+  const unplacedGenera = new Set()
 
   for (const row of rows) {
     const name = row.Family
     if (!name) {
       unclassified++
+      if (row.Species) unplacedSpecies.add(row.Species)
+      if (row.Genus) unplacedGenera.add(row.Genus)
       continue
     }
     let f = families.get(name)
@@ -164,7 +212,7 @@ function main() {
         species: row.Species,
         virus: row['Virus name(s)'] || null,
         abbreviation: row['Virus name abbreviation(s)'] || null,
-        accession: row['Virus GENBANK accession'] || null,
+        accessions: parseAccessions(row['Virus GENBANK accession']),
         exemplar: row['Exemplar or additional isolate'] === 'E',
       })
     }
@@ -206,6 +254,33 @@ function main() {
     process.exit(1)
   }
 
+  // A curated segment count marked `established` must not be contradicted by
+  // the family's own isolates. Flaviviridae asserted "1 — established" on a
+  // page that also printed Guaico Culex virus with five segment accessions;
+  // eight families were doing this. An internally falsified claim is worse than
+  // a missing one in a reference whose whole discipline is qualifying values,
+  // and it is mechanically detectable, so it fails the build like a stale name.
+  //
+  // `varies` is exempt: it already declares that the family is not uniform.
+  const contradictions = []
+  for (const f of out) {
+    const seg = f.curated?.segments
+    if (!seg || typeof seg.value !== 'number' || seg.confidence !== 'established') continue
+    for (const e of f.exemplars) {
+      const n = segmentsNamed(e.accessions)
+      if (n > seg.value) {
+        contradictions.push(`${f.name}: claims ${seg.value} segments (established) but ${e.virus ?? e.species} lists ${n}`)
+        break
+      }
+    }
+  }
+  if (contradictions.length) {
+    console.error('\ncurated segment counts contradicted by their own isolates:')
+    for (const c of contradictions) console.error(`  ${c}`)
+    console.error('mark the field `varies` with a note, or correct the value')
+    process.exit(1)
+  }
+
   const meta = {
     msl: MSL,
     vmrFile: VMR_FILE,
@@ -216,6 +291,12 @@ function main() {
       species: out.reduce((n, f) => n + f.counts.species, 0),
       isolates: rows.length,
       curated: Object.keys(FAMILIES).length,
+    },
+    // What this catalog cannot hold, stated rather than absorbed.
+    unplaced: {
+      rows: unclassified,
+      species: unplacedSpecies.size,
+      genera: unplacedGenera.size,
     },
     sources: [
       { name: 'ICTV Virus Metadata Resource', url: 'https://ictv.global/vmr', licence: 'CC BY 4.0' },

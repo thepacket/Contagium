@@ -494,6 +494,10 @@ button.on { background: var(--accent); border-color: var(--accent); color: #fff;
 .exemplars td { padding: 0.3rem 0.9rem 0.3rem 0; border-bottom: 1px solid var(--rule); vertical-align: top; }
 .exemplars .sp { font-style: italic; }
 .exemplars .acc { font-family: var(--mono); font-size: 0.82rem; color: var(--ink-3); }
+/* A segmented genome lists several accessions in one cell; they wrap as units
+   so a segment label never separates from the id it names. */
+.exemplars .acc-item { display: inline-block; white-space: nowrap; margin-right: 0.5rem; }
+.exemplars .acc-label { color: var(--ink-3); opacity: 0.75; }
 /* Abbreviations are read as identifiers, not prose, so they take the mono face
    like the accessions — but in full ink, because this is the name most readers
    are actually looking for. */

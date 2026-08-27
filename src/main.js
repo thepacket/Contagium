@@ -9,6 +9,8 @@
 import './style.css'
 import { FAMILIES, META, BALTIMORE_LABEL } from './data/catalog.js'
 
+const REPO_URL = 'https://github.com/thepacket/Contagium'
+
 const BY_NAME = new Map(FAMILIES.map((f) => [f.name, f]))
 const CURATED = FAMILIES.filter((f) => f.curated)
 const MAX_COMPARE = 3
@@ -388,7 +390,9 @@ function viewList() {
       'p.lede',
       `Every family in ICTV ${META.msl} — ${plural(META.counts.families, 'family', 'families')}, ` +
         `${plural(META.counts.genera, 'genus', 'genera')}, ${plural(META.counts.species, 'species', 'species')}. ` +
-        `${META.counts.curated} carry curated mechanism data; the rest show taxonomy and genome composition only.`,
+        `${META.counts.curated} carry curated mechanism data; the rest show taxonomy and genome composition only. ` +
+        `A further ${META.unplaced.species.toLocaleString()} species in ${META.msl} sit in no family at all and are ` +
+        'not catalogued here — see About.',
     ),
   )
 
@@ -439,7 +443,9 @@ function viewList() {
       // for the best-known virus in the catalog.
       if (
         f.exemplars.some((e) =>
-          `${e.species} ${e.virus ?? ''} ${e.abbreviation ?? ''} ${e.accession ?? ''}`.toLowerCase().includes(q),
+          `${e.species} ${e.virus ?? ''} ${e.abbreviation ?? ''} ${e.accessions.map((a) => a.id).join(' ')}`
+            .toLowerCase()
+            .includes(q),
         )
       ) {
         return true
@@ -637,13 +643,26 @@ function viewFamily(name) {
             // family for "SARS-CoV-2" found nothing while the row sat there
             // reading "severe acute respiratory syndrome coronavirus 2".
             el('td.abbr', e.abbreviation ?? ''),
+            // One link per accession. The VMR packs a segmented genome into a
+            // single cell — "Seg_1: KM461666; Seg_2: KM461667" — and linking
+            // the cell whole produced a URL containing the semicolons and
+            // spaces, which NCBI cannot resolve. 2,354 isolates had a dead
+            // link that way. The segment label is kept beside each id, because
+            // which segment an accession is for is part of the record.
             el(
               'td.acc',
-              e.accession
-                ? el(
-                    'a',
-                    { href: `https://www.ncbi.nlm.nih.gov/nuccore/${encodeURIComponent(e.accession)}`, target: '_blank', rel: 'noopener' },
-                    e.accession,
+              e.accessions.length
+                ? e.accessions.map((a, i) =>
+                    el(
+                      'span.acc-item',
+                      i ? ' ' : null,
+                      a.label ? el('span.acc-label', `${a.label} `) : null,
+                      el(
+                        'a',
+                        { href: `https://www.ncbi.nlm.nih.gov/nuccore/${encodeURIComponent(a.id)}`, target: '_blank', rel: 'noopener' },
+                        a.id,
+                      ),
+                    ),
                   )
                 : '—',
             ),
@@ -829,6 +848,23 @@ function viewAbout() {
         'chosen to cover all seven Baltimore classes so that comparisons have real mechanistic contrast. These fields ' +
         'are not published in bulk by any open source; they are assembled by hand from ViralZone and the literature.',
     ),
+    el('h2', 'What the family counts leave out'),
+    el(
+      'p',
+      `This is a family-keyed catalog, and ICTV does not place every taxon in a family. ${META.msl} contains ` +
+        `${(META.counts.genera + META.unplaced.genera).toLocaleString()} genera and ` +
+        `${(META.counts.species + META.unplaced.species).toLocaleString()} species; Contagium holds the ` +
+        `${META.counts.genera.toLocaleString()} genera and ${META.counts.species.toLocaleString()} species that ` +
+        `belong to a named family. The remaining ${META.unplaced.genera} genera and ` +
+        `${META.unplaced.species.toLocaleString()} species — overwhelmingly Caudoviricetes bacteriophage left ` +
+        'unplaced after the morphology-based families were dissolved — have no family to file them under, so this ' +
+        'catalog has nowhere to put them.',
+    ),
+    el(
+      'p',
+      'That is a limitation of the shape of this reference, not of the source: the VMR carries them. Anyone ' +
+        'comparing these totals against the published Master Species List should expect the difference.',
+    ),
     el('h2', 'On absence'),
     el(
       'p',
@@ -841,6 +877,49 @@ function viewAbout() {
       'p',
       'Where the literature disagrees — the flavivirus receptor, the human norovirus receptor, the CCHFV receptor — ' +
         'the value is marked contested rather than resolved in favour of whichever paper is most cited.',
+    ),
+    el('h2', 'What the confidence tags mean'),
+    el(
+      'p',
+      'These are editorial judgments made while reading the family factsheet and the literature around it. They are ' +
+        'not evidence codes: there is no vote count or study threshold behind them, and a second curator would not ' +
+        'reproduce every one. Read them as a warning system rather than a metric.',
+    ),
+    el(
+      'table.facts',
+      el('tr', el('th', { scope: 'row' }, 'established'), el('td', 'Well characterised and not seriously disputed for the family as a whole.')),
+      el(
+        'tr',
+        el('th', { scope: 'row' }, 'varies'),
+        el(
+          'td',
+          'Genuinely differs between genera or species, so a single family-level value would mislead. The note says how it differs.',
+        ),
+      ),
+      el('tr', el('th', { scope: 'row' }, 'contested'), el('td', 'Reported in the literature, but the literature disagrees with itself.')),
+      el('tr', el('th', { scope: 'row' }, 'unknown'), el('td', 'The field has not established it — distinct from us not having curated it.')),
+    ),
+    el(
+      'p',
+      'One consistency rule is enforced mechanically rather than trusted: a segment count marked established fails ' +
+        'the build if any isolate in that family is deposited with more segments than the count claims. Eight ' +
+        'families were contradicting themselves that way before the check existed.',
+    ),
+    el('h2', 'Provenance and reuse'),
+    el(
+      'p',
+      'Citations are at family-factsheet granularity, not per cell. A curated value links to the ViralZone factsheet ' +
+        'for its family, which is not the same as identifying the paper behind that particular receptor or ' +
+        'measurement. Per-cell primary-literature citations are the outstanding work, and until they exist this is ' +
+        'not a source to cite in a publication — follow the factsheet and read the papers.',
+    ),
+    el(
+      'p',
+      'The catalog is generated, not hand-maintained: ',
+      el('a', { href: REPO_URL, target: '_blank', rel: 'noopener' }, 'the source repository'),
+      ' carries the build script, the curated field definitions with their schema, the ViralZone page-id cache and ' +
+        'the full commit history. The generated catalog is a single JavaScript module of plain objects, so anyone ' +
+        'wanting the structured data can take it from there.',
     ),
     el('h2', 'Sources and licences'),
     el(
@@ -893,9 +972,14 @@ function route() {
 // of the view, not applied a frame after it.
 initTheme()
 
-document.getElementById('colophon-text').textContent =
-  `Built from ICTV ${META.msl} (${META.vmrFile}) and ViralZone, both CC BY 4.0. Catalog generated ${META.generated}. ` +
-  `${META.counts.families} families, ${META.counts.curated} with curated mechanism data.`
+document.getElementById('colophon-text').replaceChildren(
+  document.createTextNode(
+    `Built from ICTV ${META.msl} (${META.vmrFile}) and ViralZone, both CC BY 4.0. Catalog generated ${META.generated}. ` +
+      `${META.counts.families} families, ${META.counts.curated} with curated mechanism data. `,
+  ),
+  el('a', { href: REPO_URL, target: '_blank', rel: 'noopener' }, 'Source and data on GitHub'),
+  document.createTextNode('.'),
+)
 
 addEventListener('hashchange', route)
 route()

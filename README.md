@@ -129,6 +129,51 @@ of its source is worse than a large one, so the bundle is the price. If it ever
 needs to come down, the fix is splitting the isolate tables out of the main
 chunk and loading them per family — not reinstating a cap.
 
+## What the totals leave out
+
+Contagium reports 427 families, 3,265 genera and 14,943 species. MSL41 itself
+contains 4,149 genera and 17,554 species. The difference is not a partial
+ingest: the VMR carries all of them, and **2,611 species across 884 genera sit
+in no family at all** — overwhelmingly *Caudoviricetes* bacteriophage left
+unplaced after the morphology-based families were dissolved. A family-keyed
+catalog has nowhere to file them.
+
+That is a limitation of the shape of this reference rather than of its source,
+and the About page and the family list both say so. Anyone reconciling these
+numbers against the published Master Species List should expect the gap.
+
+## Consistency the build enforces
+
+Two invariants fail `build:catalog` rather than being trusted:
+
+- **A curated family name absent from the release.** Taxonomy churn makes a
+  stale name a live risk, and a wrong family name in a scientific reference is
+  the one unrecoverable error.
+- **An `established` segment count contradicted by the family's own isolates.**
+  Flaviviridae asserted "1 segment — established" on a page that also listed
+  Guaico Culex virus with five segment accessions. Eight families were doing
+  this. An internally falsified claim is worse than a missing one in a
+  reference whose whole discipline is qualifying values, and it is mechanically
+  detectable — so it is now checked. `varies` is exempt, since it already
+  declares the family is not uniform.
+
+Both are mirrored in `npm test` so the invariant is visible in the suite and
+not only as a build exit code.
+
+## What the confidence tags are, and are not
+
+`established` / `varies` / `contested` / `unknown` are editorial judgments made
+while reading the family factsheet and the literature around it. They are not
+evidence codes: no vote count or study threshold sits behind them, and a second
+curator would not reproduce every one. The About page says this in the
+interface rather than only here.
+
+The related limit is citation granularity. A curated value links to the
+ViralZone factsheet for its **family**, which is not the same as identifying
+the paper behind that particular receptor or measurement. Per-cell
+primary-literature citations remain the outstanding work, and until they exist
+this is not a source to cite in a publication.
+
 ## Taxonomy churn is a live risk
 
 ICTV renames and splits families continuously. Recent changes affecting this
