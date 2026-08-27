@@ -174,6 +174,12 @@ the paper behind that particular receptor or measurement. Per-cell
 primary-literature citations remain the outstanding work, and until they exist
 this is not a source to cite in a publication.
 
+The reuse criticism is the one still fully open: **this repository is private**,
+and there is no structured download. Nothing about the build is auditable from
+outside, so the About page points readers to the ICTV and ViralZone sources
+instead of implying a provenance trail that is not reachable. Making the
+repository public is the single change that would close most of it.
+
 ## Taxonomy churn is a live risk
 
 ICTV renames and splits families continuously. Recent changes affecting this

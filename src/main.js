@@ -9,8 +9,6 @@
 import './style.css'
 import { FAMILIES, META, BALTIMORE_LABEL } from './data/catalog.js'
 
-const REPO_URL = 'https://github.com/thepacket/Contagium'
-
 const BY_NAME = new Map(FAMILIES.map((f) => [f.name, f]))
 const CURATED = FAMILIES.filter((f) => f.curated)
 const MAX_COMPARE = 3
@@ -915,11 +913,10 @@ function viewAbout() {
     ),
     el(
       'p',
-      'The catalog is generated, not hand-maintained: ',
-      el('a', { href: REPO_URL, target: '_blank', rel: 'noopener' }, 'the source repository'),
-      ' carries the build script, the curated field definitions with their schema, the ViralZone page-id cache and ' +
-        'the full commit history. The generated catalog is a single JavaScript module of plain objects, so anyone ' +
-        'wanting the structured data can take it from there.',
+      'The catalog is generated rather than hand-maintained — a build script reads the VMR spreadsheet and emits the ' +
+        'whole thing — but that build script, the curated field definitions and their schema, and the commit history ' +
+        'are not currently published. There is no structured download either. Anyone wanting to audit a value or ' +
+        'reuse the data at scale should go to the ICTV and ViralZone sources named below rather than to this site.',
     ),
     el('h2', 'Sources and licences'),
     el(
@@ -972,14 +969,9 @@ function route() {
 // of the view, not applied a frame after it.
 initTheme()
 
-document.getElementById('colophon-text').replaceChildren(
-  document.createTextNode(
-    `Built from ICTV ${META.msl} (${META.vmrFile}) and ViralZone, both CC BY 4.0. Catalog generated ${META.generated}. ` +
-      `${META.counts.families} families, ${META.counts.curated} with curated mechanism data. `,
-  ),
-  el('a', { href: REPO_URL, target: '_blank', rel: 'noopener' }, 'Source and data on GitHub'),
-  document.createTextNode('.'),
-)
+document.getElementById('colophon-text').textContent =
+  `Built from ICTV ${META.msl} (${META.vmrFile}) and ViralZone, both CC BY 4.0. Catalog generated ${META.generated}. ` +
+  `${META.counts.families} families, ${META.counts.curated} with curated mechanism data.`
 
 addEventListener('hashchange', route)
 route()
