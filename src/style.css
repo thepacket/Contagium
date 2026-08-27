@@ -438,6 +438,15 @@ button.on { background: var(--accent); border-color: var(--accent); color: #fff;
   color: var(--contested);
   margin-top: 0.25rem;
 }
+/* Primary-literature citations on a single cell. Set small and quiet: they are
+   provenance, not part of the value being read. */
+.cites {
+  margin: 0.35rem 0 0;
+  padding-left: 1rem;
+  font-size: 0.82rem;
+  color: var(--ink-2);
+}
+.cites li { margin-bottom: 0.1rem; }
 .note {
   display: block;
   color: var(--ink-2);

@@ -27,6 +27,17 @@
 //     known only from sequence. Reaching for `varies` where the truth is
 //     absence of study invents a diversity nobody has demonstrated.
 //   * `note` carries the caveat when a single value would mislead.
+//   * `citation` is required when a value departs from the family factsheet,
+//     and only then. The factsheet is the default source; a row that does not
+//     rest on it has to say what it does rest on. Shape:
+//       citation: [{ title, journal, year, doi, pmid }]
+//     The case that forced it: ViralZone gives Astroviridae's tropism as
+//     enterocytes alone, but neurotropic astroviruses are documented in humans
+//     and pigs. Marking that row `varies` while still pointing at a factsheet
+//     that says otherwise would have been a false attribution.
+//     This is the failure mode no check here can catch. A source can be the
+//     current release, correctly transcribed, and still behind the literature.
+//     Only reading finds those.
 //   * `scope` names the taxon a value actually covers when that is narrower
 //     than the family, and the UI prints it beside the value. A confidence tag
 //     says how settled a claim is; it does not say what the claim is settled
@@ -432,11 +443,31 @@ export const FAMILIES = {
       confidence: 'established',
       note: 'in viral factories made of ER-derived membrane vesicles',
     },
-    tropism: { value: 'enterocytes', confidence: 'established' },
+    tropism: {
+      value: 'varies',
+      confidence: 'varies',
+      note: 'enterocytes in the classical enteric astroviruses; neurons and other neural tissue in several neurotropic mammalian lineages. The ViralZone factsheet still gives enterocytes alone, so this value comes from the primary literature instead',
+      citation: [
+        {
+          title: 'Propagation of Astrovirus VA1, a Neurotropic Human Astrovirus, in Cell Culture',
+          journal: 'J Virol',
+          year: 2017,
+          doi: '10.1128/JVI.00740-17',
+          pmid: '28701405',
+        },
+        {
+          title: 'Experimental porcine astrovirus type 3-associated polioencephalomyelitis in swine',
+          journal: 'Vet Pathol',
+          year: 2021,
+          doi: '10.1177/03009858211025794',
+          pmid: '34657543',
+        },
+      ],
+    },
     diameter: { value: [35, 35], confidence: 'established', note: 'the capsid measures about 35 nm' },
     genomeSize: { value: '6.8–7 kb', confidence: 'established' },
     segments: { value: 1, confidence: 'established' },
-    distinctive: 'Builds its replication factories out of membrane vesicles derived from the ER, and keeps to a single narrow target: the enterocytes of the gut.',
+    distinctive: 'Builds its replication factories out of membrane vesicles derived from the ER. Long read as a purely enteric family, it turns out to include neurotropic lineages that cause encephalitis in humans and pigs.',
     notable: ['Human astrovirus 1', 'Turkey astrovirus 1'],
   },
 

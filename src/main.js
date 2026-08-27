@@ -183,6 +183,24 @@ function fieldValue(field) {
     wrap.append(el('span.scope', { title: 'the claim covers this taxon, not the whole family' }, `within ${scope}`))
   }
   if (note) wrap.append(el('span.note', note))
+
+  // Per-cell citations, present where the value does not come from the family
+  // factsheet — because the factsheet is wrong, out of date, or silent. The
+  // factsheet is the default source for everything else, and a cell that
+  // departs from it has to say what it departs to.
+  if (Array.isArray(field.citation) && field.citation.length) {
+    const list = el('ul.cites')
+    for (const c of field.citation) {
+      list.append(
+        el(
+          'li',
+          el('a', { href: `https://doi.org/${c.doi}`, target: '_blank', rel: 'noopener' }, c.title),
+          ` — ${c.journal} ${c.year}`,
+        ),
+      )
+    }
+    wrap.append(list)
+  }
   return wrap
 }
 
@@ -582,8 +600,10 @@ function viewFamily(name) {
         'p.srcline',
         'Mechanism fields from ',
         viralzoneLink(f) ?? 'ViralZone',
-        ' (SIB Swiss Institute of Bioinformatics), CC BY 4.0. Per-cell primary-literature citations are still to come — ',
-        'the confidence tag says how settled each value is, and contested values are marked rather than resolved.',
+        ' (SIB Swiss Institute of Bioinformatics), CC BY 4.0, except where a row carries its own citation — those ',
+        'rows depart from the factsheet and name the papers they rest on instead. Most rows do not have one yet: ',
+        'the confidence tag says how settled each value is, the scope says what taxon it covers, and contested ',
+        'values are marked rather than resolved.',
       ),
     )
   } else {
@@ -936,10 +956,18 @@ function viewAbout() {
     el('h2', 'Provenance and reuse'),
     el(
       'p',
-      'Citations are at family-factsheet granularity, not per cell. A curated value links to the ViralZone factsheet ' +
-        'for its family, which is not the same as identifying the paper behind that particular receptor or ' +
-        'measurement. Per-cell primary-literature citations are the outstanding work, and until they exist this is ' +
-        'not a source to cite in a publication — follow the factsheet and read the papers.',
+      'Citations are at family-factsheet granularity for most values. A curated value links to the ViralZone ' +
+        'factsheet for its family, which is not the same as identifying the paper behind that particular receptor ' +
+        'or measurement. Building that out per cell is the outstanding work, and until it exists this is not a ' +
+        'source to cite in a publication — follow the factsheet and read the papers.',
+    ),
+    el(
+      'p',
+      'A row carries its own citation where its value departs from the factsheet, which happens when the factsheet ' +
+        'has fallen behind the literature. Astroviridae is the worked example: it still gives enterocytes alone, ' +
+        'while neurotropic astroviruses are documented in humans and pigs, so that row cites the papers instead. ' +
+        'Those cases are found by reading, not by any check here — a source can be current, correctly transcribed ' +
+        'and still out of date, and nothing in this build can detect that.',
     ),
     el(
       'p',

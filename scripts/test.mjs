@@ -216,6 +216,21 @@ check('scope, where present, names a real taxon of that family', () => {
   }
 })
 
+check('per-cell citations are complete enough to follow', () => {
+  // A half-written citation is worse than none: it looks like provenance and
+  // cannot be resolved.
+  for (const [name, data] of Object.entries(CURATED)) {
+    for (const [field, v] of Object.entries(data)) {
+      if (!v || typeof v !== 'object' || !v.citation) continue
+      assert(Array.isArray(v.citation) && v.citation.length, `${name}.${field}: empty citation`)
+      for (const c of v.citation) {
+        assert(c.title && c.journal && c.year, `${name}.${field}: citation missing title/journal/year`)
+        assert(/^10\.\d{4,}\//.test(c.doi ?? ''), `${name}.${field}: citation has no resolvable DOI`)
+      }
+    }
+  }
+})
+
 check('the taxa this catalog cannot hold are counted', () => {
   // A family-keyed catalog drops family-less taxa. That is defensible; leaving
   // the totals looking like the whole MSL is not.

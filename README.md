@@ -224,11 +224,32 @@ evidence codes: no vote count or study threshold sits behind them, and a second
 curator would not reproduce every one. The About page says this in the
 interface rather than only here.
 
-The related limit is citation granularity. A curated value links to the
-ViralZone factsheet for its **family**, which is not the same as identifying
-the paper behind that particular receptor or measurement. Per-cell
-primary-literature citations remain the outstanding work, and until they exist
-this is not a source to cite in a publication.
+The related limit is citation granularity. Most curated values link to the
+ViralZone factsheet for their **family**, which is not the same as identifying
+the paper behind that particular receptor or measurement. Building that out per
+cell remains the outstanding work, and until it exists this is not a source to
+cite in a publication.
+
+## When the source is the thing that is wrong
+
+A row carries its own `citation` where its value departs from the factsheet,
+and only then. The factsheet is the default source; a row that does not rest on
+it has to say what it does rest on.
+
+Astroviridae is the worked example. It read "enterocytes — established", which
+is what ViralZone still says, and it is behind the literature: astrovirus VA1 is
+a neurotropic human astrovirus, and porcine astrovirus type 3 produces
+polioencephalomyelitis experimentally. The row is now `varies` and cites those
+two papers directly, because marking it `varies` while still pointing at a
+factsheet that says otherwise would have been a false attribution. Its
+`distinctive` note, which had called it a family with "a single narrow target",
+was corrected in the same pass.
+
+**This is the failure mode no check in this repository can catch.** Every other
+invariant here is mechanical — a stale family name, a segment count contradicted
+by its own isolates, an unparsed accession. A source can be the current release,
+correctly transcribed, and still out of date. Only reading finds those, and the
+About page says so rather than implying the build guarantees currency.
 
 The reuse criticism is the one still fully open: **this repository is private**,
 and there is no structured download. Nothing about the build is auditable from
