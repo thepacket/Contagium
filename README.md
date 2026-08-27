@@ -245,6 +245,16 @@ factsheet that says otherwise would have been a false attribution. Its
 `distinctive` note, which had called it a family with "a single narrow target",
 was corrected in the same pass.
 
+Bornaviridae is the sharpest case, because the authoritative source states the
+limit outright. The ICTV report says "Since carboviruses and culterviruses have
+only been characterized genetically, information is mainly available for the
+members of genus *Orthobornavirus*", and, more narrowly still, "Studies of
+virions have only been reported for Borna disease virus 1". Tropism and
+replication site are therefore scoped to *Orthobornavirus*, and envelope and
+particle size to *Orthobornavirus bornaense* — the species BoDV-1 belongs to.
+The family also holds python, fish and skate viruses with no described particle
+at all.
+
 Matonaviridae was the second case, and a cleaner illustration of the shape of
 the problem. Every field on it described rubella virus, which was right while
 the family was monotypic. It now holds three species: ruhugu and rustrela

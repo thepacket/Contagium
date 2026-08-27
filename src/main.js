@@ -964,9 +964,12 @@ function viewAbout() {
     el(
       'p',
       'A row carries its own citation where its value departs from the factsheet, which happens when the factsheet ' +
-        'has fallen behind the literature. Astroviridae is the worked example: it still gives enterocytes alone, ' +
-        'while neurotropic astroviruses are documented in humans and pigs, so that row cites the papers instead. ' +
-        'Those cases are found by reading, not by any check here — a source can be current, correctly transcribed ' +
+        'has fallen behind the literature or is narrower than it appears. Three families are worked examples so ' +
+        'far. Astroviridae still gives enterocytes alone, while neurotropic astroviruses are documented in humans ' +
+        'and pigs. Matonaviridae was written when rubella virus was the only species in it, and now has two ' +
+        'relatives described in 2020, one of them neurotropic. Bornaviridae asserts across four genera what the ' +
+        'ICTV report says is known for one — and the virion measurements for a single virus within it. ' +
+        'Those cases are found by reading, not by any check here: a source can be current, correctly transcribed ' +
         'and still out of date, and nothing in this build can detect that.',
     ),
     el(

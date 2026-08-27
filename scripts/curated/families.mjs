@@ -76,6 +76,19 @@
 // citations are M4 work; until then the family factsheet is the citation, and
 // its page id is resolved at build time rather than hand-entered.
 
+/**
+ * Cited from several rows of one family, so it is named once rather than
+ * copied. The ICTV report chapter is the source for which genera of
+ * Bornaviridae have been characterised beyond their sequence.
+ */
+const ICTV_BORNAVIRIDAE = {
+  title: 'ICTV Virus Taxonomy Profile: Bornaviridae',
+  journal: 'J Gen Virol',
+  year: 2021,
+  doi: '10.1099/jgv.0.001613',
+  pmid: '34227935',
+}
+
 /** @type {Record<string, object>} */
 export const FAMILIES = {
   // ---- Class I: dsDNA -------------------------------------------------------
@@ -711,22 +724,45 @@ export const FAMILIES = {
     notable: ['Rift Valley fever phlebovirus', 'Dabie bandavirus (SFTSV)', 'Toscana phlebovirus'],
   },
 
+  // Almost everything known about this family is known about one genus, and
+  // the virion work is narrower still. The ICTV report states it plainly:
+  // "Since carboviruses and culterviruses have only been characterized
+  // genetically, information is mainly available for the members of genus
+  // Orthobornavirus", and "Studies of virions have only been reported for
+  // Borna disease virus 1". The scopes below follow that division rather than
+  // the ViralZone factsheet, which describes the Borna disease virus case
+  // without saying it is the only case.
   Bornaviridae: {
-    envelope: { value: true, confidence: 'established', note: 'spherical, 70–130 nm' },
+    envelope: {
+      value: true,
+      confidence: 'established',
+      scope: 'Orthobornavirus bornaense',
+      note: 'spherical, 70–130 nm. Virion studies have been reported only for Borna disease virus 1; the python, fish and skate genera in this family have no described particle',
+      citation: [ICTV_BORNAVIRIDAE],
+    },
     replicationSite: {
       value: 'nucleus',
       confidence: 'established',
-      note: 'ribonucleocapsids migrate to the nucleus after entry and progeny leave by nuclear pore export — unusual among the −ssRNA families, which otherwise replicate in the cytoplasm',
+      scope: 'Orthobornavirus',
+      note: 'ribonucleocapsids migrate to the nucleus after entry and progeny leave by nuclear pore export — unusual among the −ssRNA families, which otherwise replicate in the cytoplasm. Replication is known primarily for this genus',
+      citation: [ICTV_BORNAVIRIDAE],
     },
     tropism: {
       value: 'neurons and astrocytes',
       confidence: 'established',
-      note: 'oligodendrocytes and ependymal cells can also be infected',
+      scope: 'Orthobornavirus',
+      note: 'oligodendrocytes and ependymal cells can also be infected. Carbovirus, Cultervirus and Cartilovirus are characterised genetically and have no comparable tissue-tropism evidence',
+      citation: [ICTV_BORNAVIRIDAE],
     },
-    diameter: { value: [70, 130], confidence: 'established' },
+    diameter: {
+      value: [70, 130],
+      confidence: 'established',
+      scope: 'Orthobornavirus bornaense',
+      note: 'measured from Borna disease virus 1, the only member whose virions have been studied',
+    },
     genomeSize: { value: '~8.9 kb', confidence: 'established' },
-    distinctive: 'Replicates in the nucleus, which almost no other negative-strand RNA family does.',
-    notable: ['Borna disease virus 1', 'Mammalian 1 orthobornavirus'],
+    distinctive: 'Replicates in the nucleus, which almost no other negative-strand RNA family does. Beyond the orthobornaviruses the family is known mostly from sequence — python, fish and skate viruses with no described particle.',
+    notable: ['Borna disease virus 1', 'Parrot bornavirus 4', 'Wǔhàn sharpbelly bornavirus'],
   },
 
   Nyamiviridae: {
