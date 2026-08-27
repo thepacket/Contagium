@@ -174,6 +174,164 @@ function fieldValue(field) {
   return wrap
 }
 
+// --- virion schematic --------------------------------------------------------
+//
+// Drawn from the curated fields rather than shipped as artwork: no licensing to
+// carry, nothing added to the bundle, and it inherits the theme through
+// currentColor and the strategy hue.
+//
+// The hard part is not the drawing, it is that a picture has no room for a
+// confidence tag. So the rule is: the diagram shows only what the data marks
+// `established`, and the caption underneath carries every qualifier. A family
+// whose capsid is `varies` — Retroviridae, whose cores are conical in the
+// lentiviruses and spherical or polyhedral elsewhere — gets no diagram at all,
+// because any single shape would be a claim the text is careful not to make.
+//
+// Shapes stay categorical on purpose. A T=1 and a T=217 icosahedron are not
+// distinguishable at this size, so the drawing says "icosahedral" and the
+// T-number is left to the table cell that can state it exactly.
+
+const SVG_NS = 'http://www.w3.org/2000/svg'
+
+function svg(spec, props, ...children) {
+  const [tag, ...classes] = spec.split('.')
+  const node = document.createElementNS(SVG_NS, tag)
+  if (classes.length) node.setAttribute('class', classes.join(' '))
+  if (props) {
+    for (const [k, v] of Object.entries(props)) {
+      if (v === null || v === undefined || v === false) continue
+      node.setAttribute(k, String(v))
+    }
+  }
+  children.flat().forEach((c) => c && node.append(c))
+  return node
+}
+
+/** 'icosahedral' | 'helical' | 'complex', or null when it cannot be drawn. */
+function capsidShape(f) {
+  const c = f.curated?.capsid
+  if (!c || c.confidence !== 'established' || typeof c.value !== 'string') return null
+  if (/^icosahedral/i.test(c.value)) return 'icosahedral'
+  if (/^helical/i.test(c.value)) return 'helical'
+  if (/^complex/i.test(c.value)) return 'complex'
+  return null
+}
+
+/** A coil, drawn as `humps` arches — the side view of a helical nucleocapsid. */
+function coilPath(x, y, width, height, humps) {
+  const step = width / humps
+  let d = `M ${x} ${y}`
+  for (let i = 0; i < humps; i++) d += ` q ${step / 2} ${-height} ${step} 0`
+  return d
+}
+
+function hexPoints(cx, cy, r) {
+  return [-90, -30, 30, 90, 150, 210]
+    .map((deg) => {
+      const a = (deg * Math.PI) / 180
+      return `${(cx + r * Math.cos(a)).toFixed(1)},${(cy + r * Math.sin(a)).toFixed(1)}`
+    })
+    .join(' ')
+}
+
+function virionFigure(f) {
+  const shape = capsidShape(f)
+  const env = f.curated?.envelope
+  const enveloped = env && env.confidence === 'established' && typeof env.value === 'boolean' ? env.value : null
+  if (!shape || enveloped === null) return null
+
+  const seg = f.curated?.segments
+  const segCount = typeof seg?.value === 'number' && seg.value > 0 ? seg.value : null
+  const drawn = segCount ? Math.min(segCount, 8) : 1
+
+  const C = 36
+  const R = enveloped ? 19 : 27
+  const parts = []
+
+  if (enveloped) {
+    parts.push(svg('circle.v-env', { cx: C, cy: C, r: 30 }))
+    for (let i = 0; i < 16; i++) {
+      const a = (i * 22.5 * Math.PI) / 180
+      parts.push(
+        svg('line.v-spike', {
+          x1: (C + 30 * Math.cos(a)).toFixed(1),
+          y1: (C + 30 * Math.sin(a)).toFixed(1),
+          x2: (C + 34.5 * Math.cos(a)).toFixed(1),
+          y2: (C + 34.5 * Math.sin(a)).toFixed(1),
+        }),
+      )
+    }
+  }
+
+  if (shape === 'helical') {
+    const w = R * 1.9
+    if (drawn === 1) {
+      parts.push(svg('path.v-capsid', { d: coilPath(C - w / 2, C + R * 0.5, w, Math.min(R * 0.9, 20), 4), fill: 'none' }))
+    } else {
+      // Segmented helical genomes are drawn as separate rods, not as separate
+      // coils. Eight coils across this width leave 4px each, which renders as
+      // one solid blob rather than eight of anything — the rods stay countable,
+      // and ribonucleoprotein segments are conventionally drawn this way.
+      const gap = w / drawn
+      for (let i = 0; i < drawn; i++) {
+        const x = C - w / 2 + gap * (i + 0.5)
+        const h = R * (0.85 - 0.06 * (i % 3))
+        parts.push(
+          svg('line.v-rod', { x1: x.toFixed(1), y1: (C - h / 2).toFixed(1), x2: x.toFixed(1), y2: (C + h / 2).toFixed(1) }),
+        )
+      }
+    }
+  } else {
+    if (shape === 'complex') {
+      parts.push(svg('rect.v-capsid', { x: C - R, y: C - R * 0.68, width: R * 2, height: R * 1.36, rx: 5 }))
+    } else {
+      parts.push(svg('polygon.v-capsid', { points: hexPoints(C, C, R) }))
+      // Facet lines: alternating vertices, which reads as an icosahedron rather
+      // than a flat hexagon without pretending to a specific triangulation.
+      const p = [-90, -30, 30, 90, 150, 210].map((deg) => {
+        const a = (deg * Math.PI) / 180
+        return [C + R * Math.cos(a), C + R * Math.sin(a)]
+      })
+      for (const [i, j] of [[0, 2], [2, 4], [4, 0]]) {
+        parts.push(
+          svg('line.v-facet', { x1: p[i][0].toFixed(1), y1: p[i][1].toFixed(1), x2: p[j][0].toFixed(1), y2: p[j][1].toFixed(1) }),
+        )
+      }
+    }
+    // Genome strands go inside both shells. This runs for icosahedral as well
+    // as complex: without it a segmented icosahedral family drew an empty shell
+    // while its caption announced eleven segments.
+    const span = R * 0.62
+    for (let i = 0; i < drawn; i++) {
+      const y = drawn === 1 ? C : C - span / 2 + (i * span) / (drawn - 1)
+      parts.push(svg('line.v-genome', { x1: (C - R * 0.5).toFixed(1), y1: y.toFixed(1), x2: (C + R * 0.5).toFixed(1), y2: y.toFixed(1) }))
+    }
+  }
+
+  // Caption carries the qualifiers the drawing cannot.
+  const bits = [shape, enveloped ? 'enveloped' : 'non-enveloped']
+  if (segCount && segCount > 1) {
+    bits.push(`${segCount} segments${seg.confidence !== 'established' ? ` (${seg.confidence})` : ''}`)
+  }
+  if (segCount > 8) bits.push('8 shown')
+
+  return el(
+    'figure.virion',
+    svg(
+      'svg',
+      {
+        viewBox: '0 0 72 72',
+        width: 84,
+        height: 84,
+        role: 'img',
+        'aria-label': `Schematic virion: ${bits.join(', ')}`,
+      },
+      ...parts,
+    ),
+    el('figcaption', bits.join(' · ')),
+  )
+}
+
 function viralzoneLink(f) {
   if (!f.viralzone) return null
   return el('a', { href: `https://viralzone.expasy.org/${f.viralzone}`, target: '_blank', rel: 'noopener' }, 'ViralZone factsheet')
@@ -529,6 +687,17 @@ function viewCompare(query) {
 
   const families = picked.map((n) => BY_NAME.get(n))
   const rows = [
+    [
+      'Structure',
+      (f) =>
+        virionFigure(f) ??
+        el(
+          'span.absent',
+          capsidShape(f) === null && f.curated?.capsid
+            ? 'no single shape — see Capsid'
+            : 'not curated',
+        ),
+    ],
     ['Baltimore class', (f) => (f.baltimorePrimary ? `${f.baltimorePrimary} — ${BALTIMORE_LABEL[f.baltimorePrimary]}` : el('span.absent', 'unresolved'))],
     ['Order', (f) => f.lineage.order ?? el('span.absent', 'unassigned')],
     ...FIELDS.map(([key, label]) => [label, (f) => (f.curated ? fieldValue(f.curated[key]) : el('span.absent', 'not curated'))]),
@@ -550,7 +719,15 @@ function viewCompare(query) {
         ),
       ),
     ),
-    el('tbody', ...rows.map(([label, get]) => el('tr', el('td', label), ...families.map((f) => el('td', get(f)))))),
+    // The strategy class rides every body cell, not just the header, so --bc
+    // resolves for anything drawn inside a column — the schematic reads in its
+    // family's hue rather than falling back to plain ink.
+    el(
+      'tbody',
+      ...rows.map(([label, get]) =>
+        el('tr', el('td', label), ...families.map((f) => el('td', { class: strategyClass(f) }, get(f)))),
+      ),
+    ),
   )
   root.append(el('div.cmp-wrap', table))
   return root
