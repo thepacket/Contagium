@@ -9,7 +9,8 @@
     "preview": "vite preview",
     "build:catalog": "node scripts/build-catalog.mjs",
     "check:csp": "node scripts/check-csp.mjs",
-    "test": "node scripts/test.mjs"
+    "test": "node scripts/test.mjs",
+    "audit:scope": "node scripts/audit-scope.mjs"
   },
   "devDependencies": {
     "vite": "^8.2.1"

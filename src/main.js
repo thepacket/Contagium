@@ -349,8 +349,14 @@ function virionFigure(f, scale = 1, extraBits = []) {
     }
   }
 
-  // Caption carries the qualifiers the drawing cannot.
+  // Caption carries the qualifiers the drawing cannot — including the capsid's
+  // scope. Without this the figure quietly re-asserts family-wide exactly what
+  // the table below it was careful to limit: Coronaviridae's capsid row said
+  // "within Orthocoronavirinae" while the schematic above it said "helical"
+  // with nothing attached.
+  const capsidScope = f.curated?.capsid?.scope
   const bits = [isMultilayer(f) ? `${shape}, layered` : shape, enveloped ? 'enveloped' : 'non-enveloped']
+  if (capsidScope) bits.push(`within ${capsidScope}`)
   const d = f.curated?.diameter
   if (d?.value) bits.push(nmRange(d.value))
   if (segCount && segCount > 1) {

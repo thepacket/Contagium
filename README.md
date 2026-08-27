@@ -174,9 +174,17 @@ vary, it was simply about part of the family. Curated values now carry an
 optional `scope`, printed beside the value, naming the taxon the claim covers
 whenever that is narrower than the family.
 
-The same audit across the other 39 families found four more of these, all in
-`tropism`, which is the field most prone to it because it is inherently
-host-specific: Poxviridae's "broad; epithelial and myeloid" was Chordopoxvirinae
+`npm run audit:scope` lists every `established` tropism or receptor claim that
+carries no scope, worst first by genus count. It exists because the first sweep
+was done by filtering on subfamily count, which structurally could not see
+Caliciviridae — eleven genera, no subfamilies, and a family-wide "intestinal
+epithelium" that held only for the enteric ones. An external reviewer found it.
+The script cannot decide correctness (Papillomaviridae really is squamous
+epithelium across all 53 genera); it produces a reading list to check against
+the factsheets.
+
+The first sweep across the other 39 families found four, all in `tropism`,
+which is the field most prone to it because it is inherently host-specific: Poxviridae's "broad; epithelial and myeloid" was Chordopoxvirinae
 and left out the insect-infecting entomopoxviruses; Hantaviridae's "vascular
 endothelium" was Mammantavirinae; Hepeviridae's "hepatocytes" was
 Orthohepevirinae; and Arteriviridae's "macrophages" came from the two
