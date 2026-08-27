@@ -155,7 +155,7 @@ function confidenceTag(confidence) {
 function fieldValue(field) {
   if (!field) return el('span.absent', 'not curated')
 
-  const { value, confidence, note } = field
+  const { value, confidence, note, scope } = field
   const wrap = el('div')
 
   if (value === null || value === undefined) {
@@ -174,6 +174,14 @@ function fieldValue(field) {
     wrap.append(document.createTextNode(String(value)), confidenceTag(confidence))
   }
 
+  // A confidence tag says how settled a value is; it does not say what the
+  // value is settled *about*. "Helical nucleocapsid — established" was true of
+  // the orthocoronaviruses and simply unstudied for the two other subfamilies
+  // of Coronaviridae, and nothing on the row said so. `scope` names the taxon
+  // the claim actually covers whenever that is narrower than the family.
+  if (scope) {
+    wrap.append(el('span.scope', { title: 'the claim covers this taxon, not the whole family' }, `within ${scope}`))
+  }
   if (note) wrap.append(el('span.note', note))
   return wrap
 }

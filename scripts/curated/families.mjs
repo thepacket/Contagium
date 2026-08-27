@@ -15,6 +15,20 @@
 //       contested   — reported, but the literature disagrees
 //       unknown     — not characterised; rendered as absent, not guessed
 //   * `note` carries the caveat when a single value would mislead.
+//   * `scope` names the taxon a value actually covers when that is narrower
+//     than the family, and the UI prints it beside the value. A confidence tag
+//     says how settled a claim is; it does not say what the claim is settled
+//     *about*. Coronaviridae's capsid was "helical — established", which is
+//     true of Orthocoronavirinae and simply unstudied for the Letovirinae and
+//     Pitovirinae in the same family. Neither `established` nor `varies` was
+//     the right answer there; the missing information was the scope.
+//     Reach for it whenever a value is really about the well-studied part of a
+//     family rather than the family.
+//   * Watch the currency of the citation, not just its existence. ViralZone
+//     factsheets can describe a circumscription ICTV has since changed — the
+//     Coronaviridae page still discusses torovirus nucleocapsids, though ICTV
+//     moved Torovirus to Tobaniviridae. A value transcribed faithfully from a
+//     factsheet can still be wrong for the family as MSL41 now defines it.
 //   * `diameter` is `[min, max]` in nanometres, and it is what the compare
 //     view scales the virion schematics by. For particles that are not
 //     spherical — poxviruses, rhabdoviruses, filoviruses — the pair is the
@@ -233,12 +247,18 @@ export const FAMILIES = {
 
   // ---- Class IV: +ssRNA -----------------------------------------------------
   Coronaviridae: {
-    capsid: { value: 'helical nucleocapsid', confidence: 'established' },
+    capsid: {
+      value: 'helical nucleocapsid',
+      confidence: 'established',
+      scope: 'Orthocoronavirinae',
+      note: 'the other two subfamilies in this release, Letovirinae and Pitovirinae, are one species each and known from sequence rather than from a characterised particle',
+    },
     envelope: { value: true, confidence: 'established', note: 'club-shaped spike projections give the family its name' },
     receptor: {
-      value: ['ACE2', 'DPP4', 'aminopeptidase N', '9-O-acetylated sialic acid'],
+      value: ['ACE2', 'DPP4', 'aminopeptidase N', '9-O-acetylated sialic acid', 'CEACAM1'],
       confidence: 'varies',
-      note: 'ACE2 for SARS-CoV, SARS-CoV-2 and HCoV-NL63; DPP4 for MERS-CoV; APN for HCoV-229E; sialic acid for HCoV-OC43 and HKU1',
+      scope: 'Orthocoronavirinae',
+      note: 'ACE2 for SARS-CoV, SARS-CoV-2 and HCoV-NL63; DPP4 for MERS-CoV; APN for HCoV-229E, TGEV and PEDV; sialic acid for HCoV-OC43, HKU1 and BCoV; CEACAM1 for murine coronavirus',
     },
     replicationSite: { value: 'cytoplasm', confidence: 'established', note: 'within virus-induced double-membrane vesicles' },
     tropism: { value: 'respiratory and enteric epithelium', confidence: 'varies' },

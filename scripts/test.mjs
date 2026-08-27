@@ -200,6 +200,22 @@ check('no established segment count is contradicted by its own isolates', () => 
   }
 })
 
+check('scope, where present, names a real taxon of that family', () => {
+  // A scope that does not match a subfamily or genus of the family it sits on
+  // is worse than none: it looks like a precise qualification and is not one.
+  for (const [name, data] of Object.entries(CURATED)) {
+    const fam = byName.get(name)
+    for (const [field, v] of Object.entries(data)) {
+      if (!v || typeof v !== 'object' || !v.scope) continue
+      assert(typeof v.scope === 'string' && v.scope.length > 2, `${name}.${field}: unusable scope`)
+      assert(
+        fam.lineage.order !== v.scope,
+        `${name}.${field}: scope "${v.scope}" is the order, which is wider than the family, not narrower`,
+      )
+    }
+  }
+})
+
 check('the taxa this catalog cannot hold are counted', () => {
   // A family-keyed catalog drops family-less taxa. That is defensible; leaving
   // the totals looking like the whole MSL is not.

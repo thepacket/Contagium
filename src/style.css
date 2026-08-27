@@ -428,6 +428,16 @@ button.on { background: var(--accent); border-color: var(--accent); color: #fff;
   text-transform: uppercase;
   padding-top: 0.65rem;
 }
+/* Sits between the value and its note: narrower than the family, and the
+   reader needs to see that before reading the value as family-wide. */
+.scope {
+  display: block;
+  font-family: var(--mono);
+  font-size: 0.72rem;
+  letter-spacing: 0.02em;
+  color: var(--contested);
+  margin-top: 0.25rem;
+}
 .note {
   display: block;
   color: var(--ink-2);

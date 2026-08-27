@@ -160,6 +160,27 @@ Two invariants fail `build:catalog` rather than being trusted:
 Both are mirrored in `npm test` so the invariant is visible in the suite and
 not only as a build exit code.
 
+## Scope: what a claim is about, not just how settled it is
+
+A confidence tag says how settled a value is. It does not say what the value is
+settled *about*, and that turned out to be the more common failure.
+
+Coronaviridae's capsid read "helical nucleocapsid — established". That is true
+of Orthocoronavirinae, which is 57 of the family's 59 isolates. The other two
+subfamilies in MSL41, Letovirinae and Pitovirinae, are one species each and are
+known from sequence rather than from a characterised particle. Neither
+`established` nor `varies` was right: the value was not disputed and it did not
+vary, it was simply about part of the family. Curated values now carry an
+optional `scope`, printed beside the value, naming the taxon the claim covers
+whenever that is narrower than the family.
+
+Related, and a hazard worth stating: **a citation can be faithful and still be
+out of date.** The ViralZone Coronaviridae factsheet discusses torovirus
+nucleocapsids, but ICTV has since moved *Torovirus* to Tobaniviridae. A value
+transcribed correctly from a factsheet can be wrong for the family as MSL41 now
+defines it, so the factsheet's circumscription has to be checked against the
+release, not assumed to match it.
+
 ## What the confidence tags are, and are not
 
 `established` / `varies` / `contested` / `unknown` are editorial judgments made
