@@ -160,6 +160,10 @@ function fieldValue(field) {
 
   if (value === null || value === undefined) {
     wrap.append(el('span.absent', 'not characterised'), confidenceTag(confidence ?? 'unknown'))
+  } else if (Array.isArray(value) && value.length === 2 && value.every((v) => typeof v === 'number')) {
+    // A measured range, not a list of things. [18, 26] is one fact about a
+    // particle, so it reads as "18–26 nm" rather than as two bullets.
+    wrap.append(document.createTextNode(nmRange(value)), confidenceTag(confidence))
   } else if (Array.isArray(value)) {
     const list = el('ul.val-list')
     value.forEach((v) => list.append(el('li', v)))
@@ -234,7 +238,19 @@ function hexPoints(cx, cy, r) {
     .join(' ')
 }
 
-function virionFigure(f) {
+/** Upper bound of the particle's extent in nm, or null when not established. */
+function diameterOf(f) {
+  const d = f.curated?.diameter
+  if (!d || d.confidence !== 'established' || !Array.isArray(d.value)) return null
+  return d.value[1]
+}
+
+/** True when the capsid is described as having more than one protein shell. */
+function isMultilayer(f) {
+  return /multilayer|multi-layer|layered|double capsid/i.test(f.curated?.capsid?.value ?? '')
+}
+
+function virionFigure(f, scale = 1) {
   const shape = capsidShape(f)
   const env = f.curated?.envelope
   const enveloped = env && env.confidence === 'established' && typeof env.value === 'boolean' ? env.value : null
@@ -245,19 +261,21 @@ function virionFigure(f) {
   const drawn = segCount ? Math.min(segCount, 8) : 1
 
   const C = 36
-  const R = enveloped ? 19 : 27
+  const k = scale
+  const envR = 30 * k
+  const R = (enveloped ? 19 : 27) * k
   const parts = []
 
   if (enveloped) {
-    parts.push(svg('circle.v-env', { cx: C, cy: C, r: 30 }))
+    parts.push(svg('circle.v-env', { cx: C, cy: C, r: envR.toFixed(1) }))
     for (let i = 0; i < 16; i++) {
       const a = (i * 22.5 * Math.PI) / 180
       parts.push(
         svg('line.v-spike', {
-          x1: (C + 30 * Math.cos(a)).toFixed(1),
-          y1: (C + 30 * Math.sin(a)).toFixed(1),
-          x2: (C + 34.5 * Math.cos(a)).toFixed(1),
-          y2: (C + 34.5 * Math.sin(a)).toFixed(1),
+          x1: (C + envR * Math.cos(a)).toFixed(1),
+          y1: (C + envR * Math.sin(a)).toFixed(1),
+          x2: (C + (envR + 4.5 * Math.min(k * 1.4, 1)) * Math.cos(a)).toFixed(1),
+          y2: (C + (envR + 4.5 * Math.min(k * 1.4, 1)) * Math.sin(a)).toFixed(1),
         }),
       )
     }
@@ -286,6 +304,10 @@ function virionFigure(f) {
       parts.push(svg('rect.v-capsid', { x: C - R, y: C - R * 0.68, width: R * 2, height: R * 1.36, rx: 5 }))
     } else {
       parts.push(svg('polygon.v-capsid', { points: hexPoints(C, C, R) }))
+      // A concentric second shell where the capsid is described as multilayered.
+      // Reoviruses are the case that forced this: the layering is the defining
+      // feature of the particle, and a single outline threw it away entirely.
+      if (isMultilayer(f)) parts.push(svg('polygon.v-capsid-inner', { points: hexPoints(C, C, R * 0.62) }))
       // Facet lines: alternating vertices, which reads as an icosahedron rather
       // than a flat hexagon without pretending to a specific triangulation.
       const p = [-90, -30, 30, 90, 150, 210].map((deg) => {
@@ -298,18 +320,23 @@ function virionFigure(f) {
         )
       }
     }
-    // Genome strands go inside both shells. This runs for icosahedral as well
-    // as complex: without it a segmented icosahedral family drew an empty shell
-    // while its caption announced eleven segments.
-    const span = R * 0.62
+    // Genome strands go inside the innermost shell. This runs for icosahedral
+    // as well as complex: without it a segmented icosahedral family drew an
+    // empty shell while its caption announced eleven segments.
+    const inner = isMultilayer(f) ? R * 0.62 : R
+    const span = inner * 0.62
     for (let i = 0; i < drawn; i++) {
       const y = drawn === 1 ? C : C - span / 2 + (i * span) / (drawn - 1)
-      parts.push(svg('line.v-genome', { x1: (C - R * 0.5).toFixed(1), y1: y.toFixed(1), x2: (C + R * 0.5).toFixed(1), y2: y.toFixed(1) }))
+      parts.push(
+        svg('line.v-genome', { x1: (C - inner * 0.5).toFixed(1), y1: y.toFixed(1), x2: (C + inner * 0.5).toFixed(1), y2: y.toFixed(1) }),
+      )
     }
   }
 
   // Caption carries the qualifiers the drawing cannot.
-  const bits = [shape, enveloped ? 'enveloped' : 'non-enveloped']
+  const bits = [isMultilayer(f) ? `${shape}, layered` : shape, enveloped ? 'enveloped' : 'non-enveloped']
+  const d = f.curated?.diameter
+  if (d?.value) bits.push(nmRange(d.value))
   if (segCount && segCount > 1) {
     bits.push(`${segCount} segments${seg.confidence !== 'established' ? ` (${seg.confidence})` : ''}`)
   }
@@ -321,8 +348,11 @@ function virionFigure(f) {
       'svg',
       {
         viewBox: '0 0 72 72',
-        width: 84,
-        height: 84,
+        // Rendered larger than the geometry needs so that a particle scaled
+        // down against a bigger neighbour still shows its coil or its segments.
+        // At 84px a 4:1 reduction left nothing legible inside the envelope.
+        width: 112,
+        height: 112,
         role: 'img',
         'aria-label': `Schematic virion: ${bits.join(', ')}`,
       },
@@ -448,8 +478,14 @@ function viewList() {
 
 // --- view: family detail -----------------------------------------------------
 
+/** [18, 26] -> "18–26 nm"; [30, 30] -> "30 nm". */
+function nmRange([min, max]) {
+  return min === max ? `${min} nm` : `${min}–${max} nm`
+}
+
 const FIELDS = [
   ['capsid', 'Capsid'],
+  ['diameter', 'Particle size'],
   ['envelope', 'Envelope'],
   ['receptor', 'Entry receptor'],
   ['replicationSite', 'Replication site'],
@@ -686,11 +722,25 @@ function viewCompare(query) {
   }
 
   const families = picked.map((n) => BY_NAME.get(n))
+
+  // Draw the schematics to scale against each other, but only where that is
+  // honest: every family in view has an established size, and the spread is
+  // narrow enough that the smallest still renders. Past about 8:1 — a poxvirus
+  // beside a parvovirus is 17:1 — the small particle collapses to a few pixels
+  // and the comparison stops being readable, so the row drops to uniform size.
+  // Either way the label says which, because an unlabelled figure is read as
+  // being to scale whether or not it is.
+  const MAX_SCALE_RATIO = 6
+  const dias = families.map(diameterOf)
+  const scalable = dias.every((d) => d !== null) && Math.max(...dias) / Math.min(...dias) <= MAX_SCALE_RATIO
+  const maxDia = scalable ? Math.max(...dias) : null
+  const scaleFor = (f) => (scalable ? diameterOf(f) / maxDia : 1)
+
   const rows = [
     [
-      'Structure',
+      scalable ? 'Structure (to scale)' : 'Structure (not to scale)',
       (f) =>
-        virionFigure(f) ??
+        virionFigure(f, scaleFor(f)) ??
         el(
           'span.absent',
           capsidShape(f) === null && f.curated?.capsid

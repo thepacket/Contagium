@@ -72,7 +72,21 @@ rather than a single confident value.
   name, abbreviation or accession. `SARS-CoV-2` and `MN908947` both find
   Coronaviridae.
 - **Compare two or three side by side.** This is the view that is hard to
-  assemble by hand, and the reason the project exists in this shape.
+  assemble by hand, and the reason the project exists in this shape. It opens
+  with a virion schematic drawn from the curated fields — capsid shape,
+  envelope, segment count, particle size — not from shipped artwork.
+
+  The schematics are drawn to scale against each other when every family in
+  view has an established size and the spread is under 6:1; past that the
+  smallest particle collapses to a few pixels, so the row falls back to uniform
+  size. The label says which, always, because an unlabelled figure gets read as
+  being to scale whether it is or not.
+
+  A picture has no room for a confidence tag, so the drawing shows only values
+  marked `established` and the caption carries the qualifiers. Nine of the 40
+  curated families draw nothing at all — Retroviridae because its capsid is
+  `varies`, and any single core shape would assert what the table is careful
+  not to.
 
 ## Architecture
 
