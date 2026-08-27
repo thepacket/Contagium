@@ -89,6 +89,14 @@ const ICTV_BORNAVIRIDAE = {
   pmid: '34227935',
 }
 
+const ICTV_HEPADNAVIRIDAE = {
+  title: 'ICTV Virus Taxonomy Profile: Hepadnaviridae',
+  journal: 'J Gen Virol',
+  year: 2020,
+  doi: '10.1099/jgv.0.001415',
+  pmid: '32416744',
+}
+
 /** @type {Record<string, object>} */
 export const FAMILIES = {
   // ---- Class I: dsDNA -------------------------------------------------------
@@ -842,15 +850,45 @@ export const FAMILIES = {
 
   // ---- Class VII: dsDNA-RT --------------------------------------------------
   Hepadnaviridae: {
-    capsid: { value: 'icosahedral, T=4', confidence: 'established', note: 'a smaller T=3 form also assembles' },
+    capsid: {
+      value: 'icosahedral, T=4',
+      confidence: 'established',
+      note: 'about 36 nm and 240 core subunits; a minority assemble as a smaller T=3 form of about 32 nm with 180 subunits',
+      citation: [ICTV_HEPADNAVIRIDAE],
+    },
     envelope: { value: true, confidence: 'established', note: 'surface antigen is also secreted as non-infectious subviral particles, in vast excess over virions' },
-    receptor: { value: ['NTCP (SLC10A1)'], confidence: 'established', note: 'a bile-acid transporter restricted to hepatocytes — the reason tropism is so narrow' },
+    receptor: {
+      value: ['NTCP (SLC10A1)'],
+      confidence: 'established',
+      scope: 'Orthohepadnavirus',
+      note: 'a bile-acid transporter restricted to hepatocytes — the reason tropism is so narrow. Demonstrated for human hepatitis B and D virus and given by ICTV as the orthohepadnavirus receptor; the avian, reptile and fish genera have no receptor characterised here',
+      citation: [
+        {
+          title: 'Sodium taurocholate cotransporting polypeptide is a functional receptor for human hepatitis B and D virus',
+          journal: 'eLife',
+          year: 2012,
+          doi: '10.7554/eLife.00049',
+          pmid: '23150796',
+        },
+        ICTV_HEPADNAVIRIDAE,
+      ],
+    },
     replicationSite: { value: 'nucleus and cytoplasm', confidence: 'established', note: 'cccDNA is maintained in the nucleus; reverse transcription of pregenomic RNA happens inside cytoplasmic capsids' },
-    tropism: { value: 'hepatocytes', confidence: 'established' },
-    diameter: { value: [42, 42], confidence: 'established' },
-    genomeSize: { value: '~3.2 kb', confidence: 'established', note: 'partially double-stranded, relaxed circular — the smallest genome of any DNA virus' },
+    tropism: {
+      value: 'hepatocytes',
+      confidence: 'established',
+      scope: 'Avihepadnavirus and Orthohepadnavirus',
+      note: 'markedly hepatotropic in those two genera, with viral elements also detectable in white blood cells and extra-hepatic sites. ICTV states that less is known of the organ tropism of the metahepadnaviruses, herpetohepadnaviruses and parahepadnaviruses — the fish, frog and sucker viruses in this family',
+      citation: [ICTV_HEPADNAVIRIDAE],
+    },
+    diameter: { value: [42, 50], confidence: 'established', citation: [ICTV_HEPADNAVIRIDAE] },
+    genomeSize: {
+      value: '~3.2 kb',
+      confidence: 'established',
+      note: 'partially double-stranded, relaxed circular. Small even for a DNA virus, though the circoviruses and genomoviruses in this catalog are smaller still',
+    },
     segments: { value: 1, confidence: 'established' },
-    distinctive: 'A DNA virus that replicates through an RNA intermediate. Nuclear cccDNA is not touched by current antivirals, which is why treatment suppresses rather than cures.',
-    notable: ['Hepatitis B virus'],
+    distinctive: 'A DNA virus that replicates through an RNA intermediate. In chronic human hepatitis B the nuclear cccDNA is not cleared by current antivirals, which is why treatment suppresses rather than cures.',
+    notable: ['Hepatitis B virus', 'Duck hepatitis B virus', 'Woodchuck hepatitis virus'],
   },
 }

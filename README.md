@@ -144,7 +144,14 @@ numbers against the published Master Species List should expect the gap.
 
 ## Consistency the build enforces
 
-Two invariants fail `build:catalog` rather than being trusted:
+A superlative is the one kind of prose here that can be checked rather than
+read, because it is a claim about every other family. Hepadnaviridae's genome
+note said "the smallest genome of any DNA virus" while this same catalog listed
+Genomoviridae at ~2.17 kb and Circoviridae from 1.8 kb. `npm test` now parses
+genome sizes and rejects a "smallest" or "largest" claim that the catalog
+itself disproves.
+
+Two further invariants fail `build:catalog` rather than being trusted:
 
 - **A curated family name absent from the release.** Taxonomy churn makes a
   stale name a live risk, and a wrong family name in a scientific reference is

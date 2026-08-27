@@ -216,6 +216,37 @@ check('scope, where present, names a real taxon of that family', () => {
   }
 })
 
+check('no superlative genome-size claim is contradicted by the catalog', () => {
+  // Hepadnaviridae said "the smallest genome of any DNA virus" while this same
+  // catalog listed Genomoviridae at ~2.17 kb and Circoviridae from 1.8 kb. A
+  // superlative is a claim about every other family, which makes it the one
+  // kind of prose here that can be checked against the data rather than read.
+  const DNA = new Set(['I', 'II', 'VII'])
+  const kb = (s) => {
+    const nums = String(s).match(/[\d.]+/g)
+    return nums ? Math.min(...nums.map(Number)) : null
+  }
+  const sized = FAMILIES.filter((f) => f.curated?.genomeSize?.value && f.baltimorePrimary).map((f) => ({
+    name: f.name,
+    dna: DNA.has(f.baltimorePrimary),
+    min: kb(f.curated.genomeSize.value),
+    max: Math.max(...(String(f.curated.genomeSize.value).match(/[\d.]+/g) ?? [0]).map(Number)),
+    note: f.curated.genomeSize.note ?? '',
+  }))
+
+  for (const f of sized) {
+    const peers = sized.filter((o) => o.name !== f.name && o.dna === f.dna)
+    if (/\bsmallest\b[^.]*\bvirus/i.test(f.note)) {
+      const smaller = peers.filter((o) => o.min < f.min).map((o) => o.name)
+      assert(!smaller.length, `${f.name} claims the smallest genome but ${smaller.join(', ')} are smaller`)
+    }
+    if (/\blargest\b[^.]*\bvirus/i.test(f.note)) {
+      const bigger = peers.filter((o) => o.max > f.max).map((o) => o.name)
+      assert(!bigger.length, `${f.name} claims the largest genome but ${bigger.join(', ')} are bigger`)
+    }
+  }
+})
+
 check('per-cell citations are complete enough to follow', () => {
   // A half-written citation is worse than none: it looks like provenance and
   // cannot be resolved.
