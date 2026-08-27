@@ -78,7 +78,12 @@ export const FAMILIES = {
     envelope: { value: true, confidence: 'established', note: 'several distinct infectious forms differing in membrane count' },
     receptor: { value: null, confidence: 'unknown', note: 'no single proteinaceous receptor identified; entry via macropinocytosis with glycosaminoglycan and laminin attachment' },
     replicationSite: { value: 'cytoplasm', confidence: 'established', note: 'exceptional for a DNA virus — encodes its own transcription and replication machinery rather than using host nuclear polymerase' },
-    tropism: { value: 'broad; epithelial and myeloid', confidence: 'established' },
+    tropism: {
+      value: 'broad; epithelial and myeloid',
+      confidence: 'established',
+      scope: 'Chordopoxvirinae',
+      note: 'the entomopoxviruses are the other subfamily and infect insects; this describes the vertebrate-infecting members only',
+    },
     diameter: { value: [220, 450], confidence: 'established', note: 'brick-shaped rather than spherical: 220–450 nm long and 140–260 nm wide, so this range is length' },
     genomeSize: { value: '128–375 kb', confidence: 'established' },
     segments: { value: 1, confidence: 'established' },
@@ -355,7 +360,12 @@ export const FAMILIES = {
     envelope: { value: false, confidence: 'varies', note: 'non-enveloped when shed in bile and faeces, but quasi-enveloped in a host-derived membrane while circulating in blood' },
     receptor: { value: null, confidence: 'unknown', note: 'heparan sulfate proteoglycans act as attachment factors; no receptor established' },
     replicationSite: { value: 'cytoplasm', confidence: 'established' },
-    tropism: { value: 'hepatocytes', confidence: 'established' },
+    tropism: {
+      value: 'hepatocytes',
+      confidence: 'established',
+      scope: 'Orthohepevirinae',
+      note: 'Parahepevirinae holds a single fish virus, cutthroat trout virus, whose tropism is not described here',
+    },
     diameter: { value: [32, 32], confidence: 'established' },
     genomeSize: { value: '~7.2 kb', confidence: 'established' },
     segments: { value: 1, confidence: 'established' },
@@ -378,7 +388,8 @@ export const FAMILIES = {
     tropism: {
       value: 'macrophages',
       confidence: 'established',
-      note: 'EAV in lung macrophages then lymph nodes; PRRSV in alveolar and other tissue macrophages, later in testicular germ cells',
+      scope: 'Equarterivirinae and Variarterivirinae',
+      note: 'EAV in lung macrophages then lymph nodes; PRRSV in alveolar and other tissue macrophages, later in testicular germ cells. The family has six subfamilies and these are the two with a characterised member',
     },
     diameter: { value: [45, 60], confidence: 'established' },
     genomeSize: { value: '12–16 kb', confidence: 'established' },
@@ -483,7 +494,11 @@ export const FAMILIES = {
   },
 
   Rhabdoviridae: {
-    capsid: { value: 'helical nucleocapsid', confidence: 'established', note: 'bullet-shaped virion' },
+    capsid: {
+      value: 'helical nucleocapsid',
+      confidence: 'established',
+      note: 'bullet-shaped in the animal-infecting subfamilies; the plant-infecting Betarhabdovirinae, which are more than a third of the family, are bacilliform',
+    },
     envelope: { value: true, confidence: 'established' },
     receptor: {
       value: ['nAChR', 'NCAM', 'p75NTR', 'LDL receptor (VSV)'],
@@ -542,7 +557,12 @@ export const FAMILIES = {
       note: 'β3 integrin use tracks with pathogenicity; PCDH1 is established for Andes and Sin Nombre viruses in pulmonary endothelium',
     },
     replicationSite: { value: 'cytoplasm', confidence: 'established' },
-    tropism: { value: 'vascular endothelium', confidence: 'established' },
+    tropism: {
+      value: 'vascular endothelium',
+      confidence: 'established',
+      scope: 'Mammantavirinae',
+      note: 'the fish- and reptile-infecting subfamilies are a handful of species each and are not characterised',
+    },
     diameter: { value: [80, 120], confidence: 'established' },
     genomeSize: { value: '11–12 kb total', confidence: 'established' },
     segments: { value: 3, confidence: 'established', note: 'L, M and S' },

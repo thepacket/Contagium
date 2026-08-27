@@ -174,6 +174,18 @@ vary, it was simply about part of the family. Curated values now carry an
 optional `scope`, printed beside the value, naming the taxon the claim covers
 whenever that is narrower than the family.
 
+The same audit across the other 39 families found four more of these, all in
+`tropism`, which is the field most prone to it because it is inherently
+host-specific: Poxviridae's "broad; epithelial and myeloid" was Chordopoxvirinae
+and left out the insect-infecting entomopoxviruses; Hantaviridae's "vascular
+endothelium" was Mammantavirinae; Hepeviridae's "hepatocytes" was
+Orthohepevirinae; and Arteriviridae's "macrophages" came from the two
+subfamilies with a characterised member, out of six. Rhabdoviridae's capsid note
+said "bullet-shaped" for a family more than a third of which is bacilliform
+plant rhabdoviruses. Capsid and replication site were checked too and are
+genuinely family-wide almost everywhere — those are conserved in a way tropism
+is not.
+
 Related, and a hazard worth stating: **a citation can be faithful and still be
 out of date.** The ViralZone Coronaviridae factsheet discusses torovirus
 nucleocapsids, but ICTV has since moved *Torovirus* to Tobaniviridae. A value
