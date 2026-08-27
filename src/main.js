@@ -899,7 +899,15 @@ function viewAbout() {
     ),
     el(
       'table.facts',
-      el('tr', el('th', { scope: 'row' }, 'established'), el('td', 'Well characterised and not seriously disputed for the family as a whole.')),
+      el(
+        'tr',
+        el('th', { scope: 'row' }, 'established'),
+        el(
+          'td',
+          'Well characterised and not seriously disputed within the taxonomic scope shown. Where no narrower scope ' +
+            'is printed, that scope is the family as a whole.',
+        ),
+      ),
       el(
         'tr',
         el('th', { scope: 'row' }, 'varies'),
@@ -910,6 +918,14 @@ function viewAbout() {
       ),
       el('tr', el('th', { scope: 'row' }, 'contested'), el('td', 'Reported in the literature, but the literature disagrees with itself.')),
       el('tr', el('th', { scope: 'row' }, 'unknown'), el('td', 'The field has not established it — distinct from us not having curated it.')),
+    ),
+    el(
+      'p',
+      'A value may also carry a scope, printed beneath it as “within …”. That names the taxon the claim actually ' +
+        'covers when it is narrower than the family — usually because the evidence comes from the medically ' +
+        'familiar genus and the rest of the family has not been studied. Scope and varies answer different ' +
+        'questions: varies means the other members are known to differ, scope means they have not been ' +
+        'characterised. Coronaviridae is a scope case, Caliciviridae a varies case.',
     ),
     el(
       'p',

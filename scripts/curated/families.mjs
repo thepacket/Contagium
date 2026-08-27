@@ -10,10 +10,22 @@
 //
 //   * Every value carries a `confidence`. Nothing is asserted flatly that the
 //     field does not actually agree on.
-//       established — well characterised, not seriously disputed
+//       established — well characterised and not seriously disputed *within
+//                     the scope shown*; with no `scope`, that is the family
 //       varies      — genuinely differs across genera/species in the family
 //       contested   — reported, but the literature disagrees
 //       unknown     — not characterised; rendered as absent, not guessed
+//     `established` used to read "for the family as a whole", which stopped
+//     being true the moment `scope` existed — a value can now be settled for
+//     Orthocoronavirinae and silent about the rest of Coronaviridae.
+//   * `varies` and `scope` answer different questions, and picking the wrong
+//     one misstates what is known. `varies` means the other members are known
+//     to differ: Caliciviridae's tropism, where the vesiviruses are
+//     respiratory and the lagoviruses systemic. `scope` means the other
+//     members have not been characterised at all: Coronaviridae's capsid,
+//     settled for the orthocoronaviruses and unstudied in the two subfamilies
+//     known only from sequence. Reaching for `varies` where the truth is
+//     absence of study invents a diversity nobody has demonstrated.
 //   * `note` carries the caveat when a single value would mislead.
 //   * `scope` names the taxon a value actually covers when that is narrower
 //     than the family, and the UI prints it beside the value. A confidence tag
@@ -100,7 +112,12 @@ export const FAMILIES = {
       note: 'most species use CAR; species B largely uses CD46 or desmoglein-2. αv integrins act as internalisation co-receptors',
     },
     replicationSite: { value: 'nucleus', confidence: 'established' },
-    tropism: { value: 'respiratory, ocular and gastrointestinal epithelium', confidence: 'established' },
+    tropism: {
+      value: 'respiratory, ocular and gastrointestinal epithelium',
+      confidence: 'established',
+      scope: 'Mastadenovirus',
+      note: 'the family factsheet gives no cell tropism at all; this is the human adenovirus case. The family also holds bird, reptile, amphibian and fish genera',
+    },
     diameter: { value: [90, 90], confidence: 'established', note: 'the capsid measures about 90 nm' },
     genomeSize: { value: '26–48 kb', confidence: 'established' },
     segments: { value: 1, confidence: 'established' },
@@ -457,7 +474,8 @@ export const FAMILIES = {
     receptor: {
       value: ['sialic acid (α2,6-linked)', 'sialic acid (α2,3-linked)'],
       confidence: 'established',
-      note: 'α2,6 preference in human upper airway, α2,3 in avian enteric tract — the linkage preference is central to host range and to what a spillover strain must change',
+      scope: 'the influenza genera',
+      note: 'α2,6 in the human upper airway and α2,3 in avian gut and the human lower airway — the shift in binding preference is what receptor-switching in a pandemic strain refers to. The tick-borne and fish-infecting genera are not covered',
     },
     replicationSite: { value: 'nucleus', confidence: 'established', note: 'unusual for an RNA virus; enables cap-snatching from host transcripts and splicing of viral mRNAs' },
     tropism: {
@@ -533,10 +551,16 @@ export const FAMILIES = {
     receptor: {
       value: ['NPC1'],
       confidence: 'established',
-      note: 'NPC1 is intracellular, in the late endosome — binding requires prior cathepsin cleavage of GP. Surface molecules such as TIM-1, TAM receptors and DC-SIGN act as attachment factors, not receptors',
+      scope: 'Orthoebolavirus and Orthomarburgvirus',
+      note: 'NPC1 is engaged inside the endosome after cathepsin cleavage of GP, rather than at the cell surface. Established for the studied filoviruses only',
     },
     replicationSite: { value: 'cytoplasm', confidence: 'established' },
-    tropism: { value: 'monocytes, macrophages, dendritic cells, then hepatocytes and endothelium', confidence: 'established' },
+    tropism: {
+      value: 'monocytes, macrophages, dendritic cells, then hepatocytes and endothelium',
+      confidence: 'established',
+      scope: 'Orthoebolavirus and Orthomarburgvirus',
+      note: 'the pathogenesis of the studied filoviruses; the fish-associated genera in this family have no characterised tropism',
+    },
     diameter: { value: [80, 1400], confidence: 'established', note: 'filamentous rather than spherical: about 80 nm across but up to ~1400 nm long, so this range is length' },
     genomeSize: { value: '~19 kb', confidence: 'established' },
     segments: { value: 1, confidence: 'established' },
@@ -588,7 +612,12 @@ export const FAMILIES = {
     envelope: { value: true, confidence: 'established' },
     receptor: { value: null, confidence: 'unknown', note: 'no receptor established for Crimean-Congo haemorrhagic fever virus; the LDL receptor has been proposed' },
     replicationSite: { value: 'cytoplasm', confidence: 'established' },
-    tropism: { value: 'endothelium, hepatocytes and mononuclear phagocytes', confidence: 'established' },
+    tropism: {
+      value: 'endothelium, hepatocytes and mononuclear phagocytes',
+      confidence: 'established',
+      scope: 'Orthonairovirus',
+      note: 'drawn from CCHFV; Orthonairovirus is 64 of the 71 isolates here and the factsheet describes no other genus',
+    },
     diameter: { value: [80, 120], confidence: 'established' },
     genomeSize: { value: '~19 kb total', confidence: 'established', note: 'the largest genome in the order, driven by an unusually long L segment' },
     segments: { value: 3, confidence: 'established', note: 'L, M and S' },
@@ -651,6 +680,8 @@ export const FAMILIES = {
     tropism: {
       value: 'central nervous system, various organs and vascular endothelium',
       confidence: 'established',
+      scope: 'human infection by Orthobunyavirus',
+      note: 'the factsheet states this of human infection specifically; Orthobunyavirus is 215 of the 229 isolates here and the seven other genera are largely uncharacterised',
     },
     diameter: { value: [80, 120], confidence: 'established' },
     genomeSize: { value: 'L 6.8–12 kb, M 3.2–4.9 kb, S 1–3 kb', confidence: 'established' },

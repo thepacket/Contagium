@@ -201,6 +201,21 @@ transcribed correctly from a factsheet can be wrong for the family as MSL41 now
 defines it, so the factsheet's circumscription has to be checked against the
 release, not assumed to match it.
 
+**`varies` and `scope` answer different questions**, and picking the wrong one
+misstates what is known. `varies` means the other members are known to differ —
+Caliciviridae's tropism, where the vesiviruses are respiratory and the
+lagoviruses systemic. `scope` means the other members have not been
+characterised at all — Coronaviridae's capsid, settled for the
+orthocoronaviruses and unstudied in the two subfamilies known only from
+sequence. Reaching for `varies` where the truth is absence of study invents a
+diversity nobody has demonstrated.
+
+Adding `scope` also broke the definition of `established`, which read "well
+characterised and not seriously disputed **for the family as a whole**". That
+stopped being true the moment a value could be settled for Orthocoronavirinae
+and silent about the rest of Coronaviridae. It now reads "within the scope
+shown; where no narrower scope is printed, that scope is the family".
+
 ## What the confidence tags are, and are not
 
 `established` / `varies` / `contested` / `unknown` are editorial judgments made
