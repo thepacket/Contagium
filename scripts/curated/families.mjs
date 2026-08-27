@@ -379,17 +379,55 @@ export const FAMILIES = {
     notable: ['Chikungunya virus', 'Venezuelan equine encephalitis virus', 'Sindbis virus'],
   },
 
+  // Every field here described rubella virus alone until the family stopped
+  // being monotypic. Ruhugu and rustrela viruses were described in 2020 and
+  // ViralZone's factsheet predates them, so the corrections below rest on the
+  // primary literature rather than on the factsheet.
   Matonaviridae: {
-    capsid: { value: 'icosahedral', confidence: 'established', note: 'pleomorphic particles' },
+    capsid: {
+      value: 'icosahedral',
+      confidence: 'established',
+      scope: 'Rubivirus rubellae',
+      note: 'pleomorphic particles; the two species described in 2020 are known largely from sequence and their particles are not comparably characterised',
+    },
     envelope: { value: true, confidence: 'established' },
-    receptor: { value: ['MOG (myelin oligodendrocyte glycoprotein)'], confidence: 'established' },
+    receptor: {
+      value: ['MOG (myelin oligodendrocyte glycoprotein)'],
+      confidence: 'established',
+      scope: 'Rubivirus rubellae',
+      note: 'demonstrated for rubella virus; there is no experimental evidence that ruhugu or rustrela virus uses MOG',
+    },
     replicationSite: { value: 'cytoplasm', confidence: 'established' },
-    tropism: { value: 'respiratory epithelium, then systemic; placental and fetal', confidence: 'established' },
-    diameter: { value: [70, 80], confidence: 'established' },
+    tropism: {
+      value: 'varies',
+      confidence: 'varies',
+      note: 'respiratory entry then systemic, placental and fetal infection for rubella virus; predominantly neural in rustrela virus, which causes fatal encephalitis in spillover hosts; ruhugu virus was found in apparently healthy bats and is not characterised',
+      citation: [
+        {
+          title: 'Relatives of rubella virus in diverse mammals',
+          journal: 'Nature',
+          year: 2020,
+          doi: '10.1038/s41586-020-2812-9',
+          pmid: '33029010',
+        },
+        {
+          title: 'Revisiting Rustrela Virus: New Cases of Encephalitis and a Solution to the Capsid Enigma',
+          journal: 'Microbiol Spectr',
+          year: 2022,
+          doi: '10.1128/spectrum.00103-22',
+          pmid: '35384712',
+        },
+      ],
+    },
+    diameter: {
+      value: [70, 80],
+      confidence: 'established',
+      scope: 'Rubivirus rubellae',
+    },
     genomeSize: { value: '~9.8 kb', confidence: 'established' },
     segments: { value: 1, confidence: 'established' },
-    distinctive: 'Split out of Togaviridae in 2018. Its clinical weight is almost entirely congenital rather than acute.',
-    notable: ['Rubella virus'],
+    distinctive: 'Contains rubella virus, whose clinical weight is almost entirely congenital, alongside the animal viruses described in 2020 — including the neurotropic rustrela virus. Split out of Togaviridae in 2018.',
+    notable: ['Rubella virus', 'Rustrela virus', 'Ruhugu virus'],
   },
 
   Hepeviridae: {

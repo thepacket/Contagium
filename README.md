@@ -245,11 +245,29 @@ factsheet that says otherwise would have been a false attribution. Its
 `distinctive` note, which had called it a family with "a single narrow target",
 was corrected in the same pass.
 
+Matonaviridae was the second case, and a cleaner illustration of the shape of
+the problem. Every field on it described rubella virus, which was right while
+the family was monotypic. It now holds three species: ruhugu and rustrela
+viruses were described in 2020, and rustrela virus is neurotropic and causes
+fatal encephalitis in spillover hosts. ViralZone's factsheet predates both, so
+no comparison against the factsheet could have found this either. Tropism is now
+`varies` and cites the papers; capsid, receptor and particle size are scoped to
+`Rubivirus rubellae`, because the two newer species are known largely from
+sequence.
+
 **This is the failure mode no check in this repository can catch.** Every other
 invariant here is mechanical — a stale family name, a segment count contradicted
 by its own isolates, an unparsed accession. A source can be the current release,
 correctly transcribed, and still out of date. Only reading finds those, and the
 About page says so rather than implying the build guarantees currency.
+
+`npm run audit:scope` does print one weak proxy for it: small families whose
+curated text names far fewer viruses than the family holds, which is the
+signature of an entry written when the famous member was the only member. It
+would have flagged Matonaviridae — three species, one named, three unscoped
+`established` claims. It is only a prompt to go and read; the five families it
+currently lists are flagged on `capsid`, which is conserved across a family and
+is rarely where this goes wrong.
 
 The reuse criticism is the one still fully open: **this repository is private**,
 and there is no structured download. Nothing about the build is auditable from

@@ -44,3 +44,34 @@ for (const r of rows) {
   )
 }
 console.log('\nNot all are wrong. Check each against its factsheet before adding a scope.')
+
+// --- the famous-member pattern -----------------------------------------------
+//
+// A second, weaker signal, and the one that would have caught Matonaviridae:
+// a small family where the curated text names far fewer viruses than the family
+// holds is often a family whose entry was written when the famous member was
+// the only member. Matonaviridae had three species and named one, with rubella
+// standing in for a family that had since acquired the neurotropic rustrela
+// virus. ViralZone's factsheet predated both new species, so no check against
+// the factsheet could have found it either.
+//
+// Weak because "names fewer viruses" is usually just editorial brevity. Worth
+// scanning when a release adds species to a family that used to be monotypic.
+const famous = []
+for (const f of FAMILIES) {
+  if (!f.curated || f.counts.species > 12) continue
+  const named = (f.curated.notable ?? []).length
+  if (named >= f.counts.species) continue
+  const unscoped = ['tropism', 'receptor', 'capsid'].filter(
+    (k) => f.curated[k]?.confidence === 'established' && !f.curated[k].scope,
+  )
+  if (unscoped.length) famous.push({ family: f.name, species: f.counts.species, named, fields: unscoped.join(', ') })
+}
+
+console.log(`\n${famous.length} small families name fewer viruses than they hold and still assert unscoped values.\n`)
+console.log('  family              species named  unscoped established')
+for (const r of famous) {
+  console.log(`  ${r.family.padEnd(20)}${String(r.species).padEnd(8)}${String(r.named).padEnd(6)}${r.fields}`)
+}
+console.log('\nCapsid is usually conserved across a family and is rarely the problem here;')
+console.log('tropism and receptor are. Check any family a recent release grew.')
