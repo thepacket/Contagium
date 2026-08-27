@@ -581,6 +581,14 @@ button.on { background: var(--accent); border-color: var(--accent); color: #fff;
   align-items: flex-start;
 }
 .virion svg { overflow: visible; }
+/* On a family page the figure stands alone rather than in a table cell, so it
+   needs its own breathing room and a rule tying it to the table below. */
+.virion-solo {
+  margin: 0 0 1.1rem;
+  padding-bottom: 0.9rem;
+  border-bottom: 1px solid var(--rule);
+  max-width: var(--measure);
+}
 .virion figcaption {
   font-family: var(--mono);
   font-size: 0.7rem;

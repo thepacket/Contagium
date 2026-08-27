@@ -65,28 +65,38 @@ rather than a single confident value.
   can end up adjacent in the grid; three can, and three is also the real
   structure the classes sit on. The class itself is always printed beside the
   colour, so nothing is encoded by hue alone.
-- **Read a family** — lineage, mechanism with per-field confidence, genome and
-  host composition, and every isolate the release carries with its GenBank
-  accession, exemplar and additional alike.
+- **Read a family** — a virion schematic, then lineage, mechanism with
+  per-field confidence, genome and host composition, and every isolate the
+  release carries with its GenBank accession, exemplar and additional alike.
 - **Search by what you actually know** — family, order, realm, species, virus
   name, abbreviation or accession. `SARS-CoV-2` and `MN908947` both find
   Coronaviridae.
 - **Compare two or three side by side.** This is the view that is hard to
-  assemble by hand, and the reason the project exists in this shape. It opens
-  with a virion schematic drawn from the curated fields — capsid shape,
-  envelope, segment count, particle size — not from shipped artwork.
+  assemble by hand, and the reason the project exists in this shape.
 
-  The schematics are drawn to scale against each other when every family in
-  view has an established size and the spread is under 6:1; past that the
-  smallest particle collapses to a few pixels, so the row falls back to uniform
-  size. The label says which, always, because an unlabelled figure gets read as
-  being to scale whether it is or not.
+## The virion schematics
 
-  A picture has no room for a confidence tag, so the drawing shows only values
-  marked `established` and the caption carries the qualifiers. Nine of the 40
-  curated families draw nothing at all — Retroviridae because its capsid is
-  `varies`, and any single core shape would assert what the table is careful
-  not to.
+Both the family page and the compare view open with a schematic drawn from the
+curated fields — capsid shape, envelope, segment count, particle size — rather
+than from shipped artwork. Nothing is fetched, nothing is licensed, and the
+figure inherits the theme and the replication-strategy hue.
+
+A picture has no room for a confidence tag, which is the discipline the rest of
+the app runs on. So the drawing shows only values marked `established` and the
+caption carries every qualifier. Nine of the 40 curated families draw nothing at
+all — Retroviridae because its capsid is `varies`, and any single core shape
+would assert what the table is careful not to.
+
+Shapes stay categorical for the same reason. A T=1 and a T=217 icosahedron are
+not distinguishable at this size, so the drawing says "icosahedral" and the
+T-number is left to the cell that can state it exactly.
+
+In the compare view the schematics are drawn to scale against each other when
+every family in view has an established size and the spread is under 6:1; past
+that the smallest particle collapses to a few pixels, so the row falls back to
+uniform size. A family page has nothing to scale against and says "not to
+scale" outright. The label is always present, because an unlabelled figure gets
+read as proportional whether it is or not.
 
 ## Architecture
 

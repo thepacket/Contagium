@@ -250,7 +250,15 @@ function isMultilayer(f) {
   return /multilayer|multi-layer|layered|double capsid/i.test(f.curated?.capsid?.value ?? '')
 }
 
-function virionFigure(f, scale = 1) {
+/**
+ * `extraBits` are appended to the caption. The family page uses it to say
+ * "not to scale": on a single-family page there is nothing to scale against,
+ * and a lone figure at a fixed size is read as proportional unless it says
+ * otherwise. Scaling every page against a fixed global reference was the
+ * alternative and it does not work — the largest curated particle is a 1400 nm
+ * filovirus, which would render a coronavirus at 8% and a parvovirus as a dot.
+ */
+function virionFigure(f, scale = 1, extraBits = []) {
   const shape = capsidShape(f)
   const env = f.curated?.envelope
   const enveloped = env && env.confidence === 'established' && typeof env.value === 'boolean' ? env.value : null
@@ -341,6 +349,7 @@ function virionFigure(f, scale = 1) {
     bits.push(`${segCount} segments${seg.confidence !== 'established' ? ` (${seg.confidence})` : ''}`)
   }
   if (segCount > 8) bits.push('8 shown')
+  bits.push(...extraBits)
 
   return el(
     'figure.virion',
@@ -532,6 +541,19 @@ function viewFamily(name) {
 
   root.append(el('h2', 'Mechanism'))
   if (f.curated) {
+    // The schematic sits above the table it summarises. Same rules as in the
+    // compare view: drawn only from `established` values, absent entirely where
+    // the shape or the envelope is not settled.
+    const fig = virionFigure(f, 1, ['not to scale'])
+    if (fig) {
+      // Carries the strategy class itself so --bc resolves: unlike a compare
+      // cell, nothing above this figure sets one, and without it the schematic
+      // falls back to plain ink while the rest of the page is in its hue.
+      fig.classList.add('virion-solo')
+      const cls = strategyClass(f)
+      if (cls) fig.classList.add(cls)
+      root.append(fig)
+    }
     const table = el('table.facts')
     for (const [key, label] of FIELDS) {
       table.append(el('tr', el('th', { scope: 'row' }, label), el('td', fieldValue(f.curated[key]))))
