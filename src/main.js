@@ -9,6 +9,8 @@
 import './style.css'
 import { FAMILIES, META, BALTIMORE_LABEL } from './data/catalog.js'
 
+const REPO_URL = 'https://github.com/thepacket/Contagium'
+
 const BY_NAME = new Map(FAMILIES.map((f) => [f.name, f]))
 const CURATED = FAMILIES.filter((f) => f.curated)
 const MAX_COMPARE = 3
@@ -974,10 +976,19 @@ function viewAbout() {
     ),
     el(
       'p',
-      'The catalog is generated rather than hand-maintained — a build script reads the VMR spreadsheet and emits the ' +
-        'whole thing — but that build script, the curated field definitions and their schema, and the commit history ' +
-        'are not currently published. There is no structured download either. Anyone wanting to audit a value or ' +
-        'reuse the data at scale should go to the ICTV and ViralZone sources named below rather than to this site.',
+      'The catalog is generated rather than hand-maintained: a build script reads the VMR spreadsheet and emits the ' +
+        'whole thing. That script, the curated field definitions with their schema, the invariants the build ' +
+        'enforces and the full commit history are public — ',
+      el('a', { href: REPO_URL, target: '_blank', rel: 'noopener' }, 'the source repository'),
+      ' carries all of it, so a value here can be traced to the line that produced it. The generated catalog is a ' +
+        'single JavaScript module of plain objects and can be taken from there; there is no separate structured ' +
+        'download, and no versioned release or DOI.',
+    ),
+    el(
+      'p',
+      'The software is MIT. The data is not: it derives from the ICTV Virus Metadata Resource and from ViralZone, ' +
+        'both CC BY 4.0, and stays that way — reusing it carries their attribution requirement. The scope, ' +
+        'confidence and note text written for this project is offered under CC BY 4.0 on the same terms.',
     ),
     el('h2', 'Sources and licences'),
     el(
