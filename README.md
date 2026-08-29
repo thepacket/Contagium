@@ -6,6 +6,8 @@ explicit about what is not known.
 
 Live at **[contagium.fly.dev](https://contagium.fly.dev)**.
 
+[![The Contagium family list: 427 virus families as a grid of cards, tinted by replication strategy — blue for DNA, green for RNA, orange for reverse-transcribing — each showing lineage, genus and species counts, Baltimore class and host, with curated families marked](docs/hero.png)](https://contagium.fly.dev)
+
 The name is Beijerinck's: *contagium vivum fluidum*, the term he coined in 1898
 for something infectious that passed through a filter no bacterium could. It was
 a name for a thing nobody had seen.
