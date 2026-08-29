@@ -56,8 +56,9 @@ request after an idle period pays a wake-up of roughly a second. Set
 **256 MB, one shared CPU.** nginx serving three files needs a fraction of this.
 Every comparison, filter and search runs in the visitor's browser.
 
-**The catalog is the bundle.** 447 kB of JavaScript, 93 kB gzipped, almost all
-of it the 427-family catalog compiled from the VMR. It is served once per cold
+**The catalog is the bundle.** 2.5 MB of JavaScript, 434 kB gzipped, almost all
+of it the 427-family catalog compiled from the VMR — every one of its 16,674
+isolate rows, since the build stopped capping them at eight per family. It is served once per cold
 visit and then cached for a year, which is the trade the build-time ingest
 makes: a larger first load in exchange for no runtime backend and no per-view
 requests.

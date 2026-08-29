@@ -4,6 +4,8 @@ Every virus family in the current ICTV taxonomy, with curated replication
 mechanism, capsid, envelope and receptor data for a group of 40 — cited, and
 explicit about what is not known.
 
+Live at **[contagium.fly.dev](https://contagium.fly.dev)**.
+
 The name is Beijerinck's: *contagium vivum fluidum*, the term he coined in 1898
 for something infectious that passed through a filter no bacterium could. It was
 a name for a thing nobody had seen.
@@ -121,7 +123,7 @@ build pipeline does not carry a spreadsheet library for the sake of one file
 read once a year.
 
 **The catalog is complete, and that is what it costs.** All 16,674 isolate rows
-ship in the bundle — 423 kB gzipped, up from 96 kB when the build kept only the
+ship in the bundle — 434 kB gzipped, up from 96 kB when the build kept only the
 first eight exemplars per family. That cap was dropping 85.8% of the release and
 cutting by spreadsheet order, so Coronaviridae listed eight *Alphacoronavirus*
 bat isolates and no SARS at all. A reference that quietly withholds five sixths
@@ -328,3 +330,23 @@ Both primary sources are CC BY 4.0, so attribution is a licence obligation as
 much as a scientific one. It is carried per record rather than as a footnote —
 which is also why the citation field was required from the first migration
 rather than retrofitted.
+
+## Contributing
+
+**Pull requests are not accepted.** Corrections reported as issues are very
+much wanted — an error in a scientific reference is a real defect. See
+[CONTRIBUTING.md](CONTRIBUTING.md) for what makes a report actionable and for
+the list of things that are known limitations rather than bugs.
+
+## Licence
+
+The software — build scripts, application, tests, configuration — is MIT.
+Copyright (c) 2026 Andre Paquette. See [LICENSE](LICENSE).
+
+The virological data is not mine to relicense and is **not** MIT. The catalog
+derives from the ICTV Virus Metadata Resource and the mechanism values from
+ViralZone, both CC BY 4.0, and both stay that way. Reusing this repository
+carries their attribution requirement with it. The scope, confidence and note
+text written for this project is offered under CC BY 4.0 on the same terms, so
+a curated row can be reused whole without untangling which clause came from
+where.
