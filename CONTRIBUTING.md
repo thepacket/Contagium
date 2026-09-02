@@ -1,14 +1,16 @@
 # Contributing
 
-**Pull requests are not accepted.** They will be closed unread. This is a
-single-author reference and the curated layer is an editorial position rather
-than a collection of patches — a mechanism value carries a confidence tag, a
-taxonomic scope and sometimes a citation, and those judgments have to stay
-consistent across all 40 families to mean anything.
+**Pull requests are welcome.** Bear in mind that the curated layer is an
+editorial position rather than a collection of patches — a mechanism value
+carries a confidence tag, a taxonomic scope and sometimes a citation, and those
+judgments have to stay consistent across all 40 families to mean anything. So a
+pull request that changes a curated value needs the same evidence a good issue
+carries (below), and will be reviewed against the neighbouring families before
+it is merged. Fixes to the build, the application or the tests are simpler.
 
-**Corrections are genuinely wanted, as issues.** This is a scientific
-reference, so an error in it is a real defect and reporting one is a
-contribution. The most useful reports, roughly in order:
+**Corrections are just as welcome as issues.** This is a scientific reference,
+so an error in it is a real defect and reporting one is a contribution. The
+most useful reports, roughly in order:
 
 1. **A value contradicted by its own source.** The factsheet says one thing and
    the row says another.

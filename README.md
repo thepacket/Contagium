@@ -335,10 +335,11 @@ rather than retrofitted.
 
 ## Contributing
 
-**Pull requests are not accepted.** Corrections reported as issues are very
-much wanted — an error in a scientific reference is a real defect. See
-[CONTRIBUTING.md](CONTRIBUTING.md) for what makes a report actionable and for
-the list of things that are known limitations rather than bugs.
+Pull requests are welcome, and so are corrections reported as issues — an
+error in a scientific reference is a real defect. See
+[CONTRIBUTING.md](CONTRIBUTING.md) for what a change to a curated value needs
+to carry, what makes a report actionable, and the list of things that are
+known limitations rather than bugs.
 
 ## Licence
 
